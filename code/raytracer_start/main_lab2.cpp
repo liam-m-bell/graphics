@@ -31,9 +31,9 @@
  * You are expected to fill in the missing code in polymesh.cpp.
  */
 
-#include "framebuffer.h"
+#include "core/framebuffer.h"
 #include "linedrawer.h"
-#include "polymesh_object.h"
+#include "Objects/polymesh_object.h"
 
 int main(int argc, char *argv[])
 {
@@ -49,8 +49,7 @@ int main(int argc, char *argv[])
 	// Read in the teapot model.
   PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
   pm->apply_transform(*transform);
-
-
+      
   // For each triangle in the model,
   for (int i = 0; i< pm->triangle_count; i += 1)
   {
