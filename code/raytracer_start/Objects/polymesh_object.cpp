@@ -30,24 +30,27 @@ using namespace std;
 
 void PolyMesh::triangulatePolygon(int P[], int n){
     if (n == 3){
+        // Already a triangle
         triangle[triangle_count][0] = P[0];
         triangle[triangle_count][1] = P[1];
         triangle[triangle_count][2] = P[2];
         triangle_count++;
     }
     else if (n == 4){
+        // Split quadralateral into two triangles
         triangle[triangle_count][0] = P[0];
         triangle[triangle_count][1] = P[1];
         triangle[triangle_count][2] = P[2];
         triangle_count++;
-        triangle[triangle_count][0] = P[2];
+        triangle[triangle_count][0] = P[0];
         triangle[triangle_count][1] = P[3];
-        triangle[triangle_count][2] = P[0];
+        triangle[triangle_count][2] = P[2];
         triangle_count++;
     }
 
     else{
         // Not implemented
+        cout << "5";
         return;
     }
 }
@@ -66,12 +69,14 @@ PolyMesh::PolyMesh(char* file, bool smooth)
         string lineHeader;
         iss >> lineHeader;
 
+        // Verticies
         if (lineHeader == "v"){
             float x, y, z;
             iss >> x >> y >> z;
             vertex[vertex_count] = Vertex(x, y, z);
             vertex_count++;
         }
+        // Faces
         else if (lineHeader == "f"){
             int faceVerticies[4];
             int fvCount = 0;
@@ -81,17 +86,23 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                 istringstream vs(faceVertex);
                 string vertexIndex;
                 getline(vs, vertexIndex, '/');
+
+                cout << vertexIndex;
+                cout << " ";
+
                 faceVerticies[fvCount] = stoi(vertexIndex) - 1;
                 fvCount++;
             }
-
+            cout << "\n";
             triangulatePolygon(faceVerticies, fvCount);
+            cout << "Triangles: ";
+            cout << triangle_count;
+            cout << "\n";
         }
         else{
 
         }
     }
-
     modelFile.close();
 }
 

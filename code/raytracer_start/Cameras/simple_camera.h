@@ -20,7 +20,7 @@
 #ifndef _SIMPLE_CAMERA_H_
 #define _SIMPLE_CAMERA_H_
 
-#include "camera.h"
+#include "../core/camera.h"
 
 class SimpleCamera: public Camera{
 public:
