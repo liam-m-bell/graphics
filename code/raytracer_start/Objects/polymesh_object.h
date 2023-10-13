@@ -20,9 +20,12 @@
 
 #pragma once
 
+#include <vector>
+#include <array>
+
 #include "../core/object.h"
 
-typedef int TriangleIndex[3];
+typedef array<int, 3> TriangleIndex;
 
 class PolyMesh:public Object{
 public:
@@ -35,9 +38,9 @@ public:
 	~PolyMesh(){}
 
 	int vertex_count;
-	Vertex vertex[10000];
+	vector<Vertex> vertex;
 
 	int triangle_count;
-	TriangleIndex triangle[10000];
+	vector<TriangleIndex> triangle;
 	
 };
