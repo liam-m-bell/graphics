@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "object.h"
+#include "../core/object.h"
 
 class Quadratic : public Object {
 public:

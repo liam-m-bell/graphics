@@ -22,7 +22,7 @@
  
 #pragma once
 
-#include "object.h"
+#include "../core/object.h"
 
 class CSG : public Object
 {

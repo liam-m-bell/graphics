@@ -23,7 +23,7 @@
 #ifndef _FULL_CAMERA_H_
 #define _FULL_CAMERA_H_
 
-#include "camera.h"
+#include "../core/camera.h"
 
 class FullCamera: public Camera{
 public:
