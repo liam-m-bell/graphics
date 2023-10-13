@@ -31,32 +31,30 @@ using namespace std;
 void PolyMesh::triangulatePolygon(int P[], int n){
     if (n == 3){
         // Already a triangle
-        triangle[triangle_count][0] = P[0];
-        triangle[triangle_count][1] = P[1];
-        triangle[triangle_count][2] = P[2];
+        TriangleIndex t = { P[0], P[1], P[2] };
+        triangle.push_back(t);
         triangle_count++;
     }
     else if (n == 4){
         // Split quadralateral into two triangles
-        triangle[triangle_count][0] = P[0];
-        triangle[triangle_count][1] = P[1];
-        triangle[triangle_count][2] = P[2];
-        triangle_count++;
-        triangle[triangle_count][0] = P[0];
-        triangle[triangle_count][1] = P[3];
-        triangle[triangle_count][2] = P[2];
-        triangle_count++;
+        TriangleIndex a = { P[0], P[1], P[2] };
+        triangle.push_back(a);
+
+        TriangleIndex b = { P[0], P[3], P[2] };
+        triangle.push_back(b);
+
+        triangle_count += 2;
     }
 
     else{
-        // Not implemented
-        cout << "5";
+        // Not currently implemented for n-polygons, n >= 5 
         return;
     }
 }
 
 PolyMesh::PolyMesh(char* file, bool smooth)
 {
+    // Open OBJ
     ifstream modelFile;
     modelFile.open(file);
     
@@ -64,7 +62,9 @@ PolyMesh::PolyMesh(char* file, bool smooth)
     triangle_count = 0;
 
     string line;
+    // Read each line
     while (getline(modelFile, line)){
+        // Get line header
         istringstream iss(line);
         string lineHeader;
         iss >> lineHeader;
@@ -73,7 +73,7 @@ PolyMesh::PolyMesh(char* file, bool smooth)
         if (lineHeader == "v"){
             float x, y, z;
             iss >> x >> y >> z;
-            vertex[vertex_count] = Vertex(x, y, z);
+            vertex.push_back(Vertex(x, y, z));
             vertex_count++;
         }
         // Faces
@@ -82,22 +82,18 @@ PolyMesh::PolyMesh(char* file, bool smooth)
             int fvCount = 0;
             string faceVertex;
 
+            // Get all vertex indicies
             while (iss >> faceVertex){
                 istringstream vs(faceVertex);
                 string vertexIndex;
                 getline(vs, vertexIndex, '/');
 
-                cout << vertexIndex;
-                cout << " ";
-
+                // OBK starts indexing at one, so correct
                 faceVerticies[fvCount] = stoi(vertexIndex) - 1;
                 fvCount++;
             }
-            cout << "\n";
+
             triangulatePolygon(faceVerticies, fvCount);
-            cout << "Triangles: ";
-            cout << triangle_count;
-            cout << "\n";
         }
         else{
 
@@ -117,6 +113,7 @@ Hit* PolyMesh::intersection(Ray ray)
 
 void PolyMesh::apply_transform(Transform& trans)
 {
+    // Transform each vertex
     for (int i = 0; i < vertex_count; i++){
         trans.apply(vertex[i]);
     }
