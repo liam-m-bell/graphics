@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../core/object.h"
+#include "object.h"
 
 typedef int TriangleIndex[3];
 
@@ -29,15 +29,9 @@ public:
 
 	Hit *intersection(Ray ray);
 	void apply_transform(Transform& trans);
-	void triangulatePolygon(int* P, int n);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}
 
-	int vertex_count;
-	Vertex vertex[10000];
 
-	int triangle_count;
-	TriangleIndex triangle[10000];
-	
 };

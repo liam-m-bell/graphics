@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "../core/material.h"
+#include "material.h"
 
 class FalseColour : public Material {
 public:

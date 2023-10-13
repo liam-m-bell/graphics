@@ -25,24 +25,24 @@
 #include <sstream>
 
 // these are core raytracing classes
-#include "Core/framebuffer.h"
-#include "Core/scene.h"
+#include "framebuffer.h"
+#include "scene.h"
 
 // classes that contain our objects to be rendered, all derived from Object
-#include "objects/polymesh_object.h"
-#include "objects/sphere_object.h"
-#include "objects/plane_object.h"
+#include "polymesh_object.h"
+#include "sphere_object.h"
+#include "plane_object.h"
 
 // classes that contain our lights, all derived from Light
-#include "lights/directional_light.h"
+#include "directional_light.h"
 
 // classes that contain the materials applied to an object, all derived from Material
-#include "materials/phong_material.h"
-#include "materials/falsecolour_material.h"
+#include "phong_material.h"
+#include "falsecolour_material.h"
 
 //classes that contain cameras, all derived from Camera
-#include "cameras/simple_camera.h"
-#include "cameras/full_camera.h"
+#include "simple_camera.h"
+#include "full_camera.h"
 
 using namespace std;
 
