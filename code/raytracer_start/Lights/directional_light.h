@@ -21,7 +21,7 @@
 // and can be treated as infinitely far away.
 
 #pragma once
-#include "light.h"
+#include "../core/light.h"
 
 class DirectionalLight : public Light {
 public:
