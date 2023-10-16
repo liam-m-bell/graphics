@@ -20,7 +20,7 @@
 
 using namespace std;
 
-#include "csg_object.h"
+#include "../core/csg_object.h"
 
 CSG::CSG(CSG::Mode p_mode, Object* p_left, Object* p_right)
 {

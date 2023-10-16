@@ -23,7 +23,7 @@
 #ifndef _FULL_CAMERA_H_
 #define _FULL_CAMERA_H_
 
-#include "camera.h"
+#include "../core/camera.h"
 
 class FullCamera: public Camera{
 public:
@@ -33,8 +33,11 @@ public:
   Vertex position;
   Vector lookat;
   Vector up;
+  Vector w;
+  Vector u;
+  Vector v;
   Vector right;
-
+  
   FullCamera();
 
   FullCamera(float p_f, Vertex& p_position, Vector& p_lookat, Vector &p_up);

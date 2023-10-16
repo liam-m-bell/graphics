@@ -25,31 +25,31 @@
 #include <sstream>
 
 // these are core raytracing classes
-#include "framebuffer.h"
-#include "scene.h"
+#include "core/framebuffer.h"
+#include "core/scene.h"
 
 // classes that contain our objects to be rendered, all derived from Object
-#include "polymesh_object.h"
-#include "sphere_object.h"
-#include "plane_object.h"
+#include "objects/polymesh_object.h"
+#include "objects/sphere_object.h"
+#include "objects/plane_object.h"
 
 // classes that contain our lights, all derived from Light
-#include "directional_light.h"
+#include "lights/directional_light.h"
 
 // classes that contain the materials applied to an object, all derived from Material
-#include "phong_material.h"
-#include "falsecolour_material.h"
+#include "materials/phong_material.h"
+#include "materials/falsecolour_material.h"
 
 //classes that contain cameras, all derived from Camera
-#include "simple_camera.h"
-#include "full_camera.h"
+#include "cameras/simple_camera.h"
+#include "cameras/full_camera.h"
 
 using namespace std;
 
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-  Sphere *sp = new Sphere(Vertex(0.0f,0.0f,2.0f),1.0f);
+  Sphere *sp = new Sphere(Vertex(0.0f,0.0f,8.0f),1.0f);
   FalseColour *fm = new FalseColour();
   sp->set_material(fm);
   scene.add_object(sp);
@@ -71,8 +71,11 @@ int main(int argc, char *argv[])
 	build_scene(scene);
 	
 	// Declare a camera
-	Camera *camera = new SimpleCamera(0.5f);
-	//Camera* camera = new FullCamera(0.5f, Vertex(-1.0f, 0.0f, 0.0f), Vector(1.0f, 0.0f, 1.0f), Vector(0.0f, 1.0f, 0.0f));
+	//Camera *camera = new SimpleCamera(0.5f);
+	Vertex position(0.0f, 0.0f, 0.0f);
+	Vector lookat(0.0f, 0.0f, 1.0f);
+	Vector up(0.0f, 1.0f, 0.0f);
+	Camera* camera = new FullCamera(0.5f, position, lookat, up);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);
