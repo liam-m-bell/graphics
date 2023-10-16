@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "material.h"
+#include "../core/material.h"
 
 class Phong : public Material {
 public:

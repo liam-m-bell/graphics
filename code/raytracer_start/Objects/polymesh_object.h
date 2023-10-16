@@ -20,18 +20,27 @@
 
 #pragma once
 
-#include "object.h"
+#include <vector>
+#include <array>
 
-typedef int TriangleIndex[3];
+#include "../core/object.h"
+
+typedef array<int, 3> TriangleIndex;
 
 class PolyMesh:public Object{
 public:
 
 	Hit *intersection(Ray ray);
 	void apply_transform(Transform& trans);
+	void triangulatePolygon(int* P, int n);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}
 
+	int vertex_count;
+	vector<Vertex> vertex;
 
+	int triangle_count;
+	vector<TriangleIndex> triangle;
+	
 };

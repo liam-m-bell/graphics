@@ -19,8 +19,8 @@
  // The global material generates a reflection/refraction layer
 #pragma once
 
-#include "material.h"
-#include "environment.h"
+#include "../core/material.h"
+#include "../core/environment.h"
 
 class GlobalMaterial: public Material {
 public:
