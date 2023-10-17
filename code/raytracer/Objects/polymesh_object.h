@@ -32,7 +32,9 @@ public:
 
 	Hit *intersection(Ray ray);
 	void apply_transform(Transform& trans);
-	void triangulatePolygon(int* P, int n);
+	void triangulatePolygon(int* P, int* normals, int n);
+	Vector getTriangleNormal(TriangleIndex t);
+	void addTriangle(TriangleIndex t, int* P, int* normals);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}
@@ -42,5 +44,13 @@ public:
 
 	int triangle_count;
 	vector<TriangleIndex> triangle;
+
+	int textureCoordsCount;
+	vector<Vertex> textureCoords;
+
+	int vertexNormalsCount;
+	vector<Vector> vertexNormals;
+
+	vector<Vector> triangleNormals;
 	
 };
