@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Read in the teapot model.
-  PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
+  PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
   pm->apply_transform(*transform);
 
   // For each triangle in the model,

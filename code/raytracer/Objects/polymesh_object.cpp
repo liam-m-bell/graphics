@@ -46,8 +46,8 @@ void PolyMesh::addTriangle(TriangleIndex t, int P[], int normals[]){
     //     }
     //     normal += vertexNormals[normals[i]];
     // }
-    Vector normal = getTriangleNormal(t);
-    normal.normalise();
+    Vector normal = getTriangleNormal(triangle[triangle_count]);
+    //normal.normalise();
     triangleNormals.push_back(normal);
 
     triangle_count++;
@@ -175,7 +175,7 @@ bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
 Hit* PolyMesh::intersection(Ray ray)
 {
     for (int i = 0; i < triangle_count; i++){
-        Vector normal = getTriangleNormal(triangle[i]);
+        Vector normal = triangleNormals[i];
 
         float V = normal.dot(ray.direction);
         float d = -normal.dot(vertex[(triangle[i])[0]]);
@@ -269,6 +269,10 @@ void PolyMesh::apply_transform(Transform& trans)
     // Transform each vertex
     for (int i = 0; i < vertex_count; i++){
         trans.apply(vertex[i]);
-        trans.apply(triangleNormals[i]);
+    }
+
+    for (int i = 0; i < triangle_count; i++){
+        Vector normal = getTriangleNormal(triangle[i]);
+        triangleNormals[i] = normal;
     }
 }

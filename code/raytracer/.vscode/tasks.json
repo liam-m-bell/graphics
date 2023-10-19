@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "main_lab34.cpp",
+                "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 ".\\Objects\\sphere_object.cpp",
@@ -19,7 +19,8 @@
                 ".\\Objects\\polymesh_object.cpp",
                 ".\\Objects\\plane_object.cpp",
                 ".\\Materials\\phong_material.cpp",
-                ".\\Lights\\directional_light.cpp"
+                ".\\Lights\\directional_light.cpp",
+                ".\\linedrawer.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

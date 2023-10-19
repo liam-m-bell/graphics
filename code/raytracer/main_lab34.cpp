@@ -55,36 +55,35 @@ void build_scene(Scene& scene)
 		0.0f, 1.0f, 0.0f, 20.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 	pm->apply_transform(*transform);
-	FalseColour *pmmat = new FalseColour();
-	pm->set_material(pmmat);
-	//scene.add_object(pm);
+	pm->set_material(new FalseColour());
+	scene.add_object(pm);
 	
-	Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
-	sp1->set_material(new Phong(Colour(10, 0, 0), Colour(100, 0, 0), Colour(30, 0, 0), 10));
-	scene.add_object(sp1);
+	// Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
+	// sp1->set_material(new Phong(Colour(10, 0, 0), Colour(100, 0, 0), Colour(30, 0, 0), 10));
+	// scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(1.0f,0.5f,1.0f),0.5f);
-	sp2->set_material(new Phong(Colour(0, 10, 0), Colour(0, 50, 0), Colour(0, 20, 0), 10));
-	scene.add_object(sp2);
+	// Sphere *sp2 = new Sphere(Vertex(1.0f,0.5f,1.0f),0.5f);
+	// sp2->set_material(new Phong(Colour(0, 10, 0), Colour(0, 50, 0), Colour(0, 20, 0), 10));
+	// scene.add_object(sp2);
 
-	Sphere *sp3 = new Sphere(Vertex(1.0f,1.5f,4.0f),1.5f);
-	sp3->set_material(new Phong(Colour(0, 0, 10), Colour(0, 0, 80), Colour(0, 0, 10), 10));
-	scene.add_object(sp3);
+	// Sphere *sp3 = new Sphere(Vertex(1.0f,1.5f,4.0f),1.5f);
+	// sp3->set_material(new Phong(Colour(0, 0, 10), Colour(0, 0, 80), Colour(0, 0, 10), 10));
+	// scene.add_object(sp3);
 
-	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
-	scene.add_object(p1);
+	// Plane *p1 = new Plane(0, -1, 0, 0);
+	// p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
+	// scene.add_object(p1);
 
-	Light *l1 = new DirectionalLight(Vector(-0.5, -0.5, 1), Colour(50, 50, 50));
-	scene.add_light(l1);
+	// Light *l1 = new DirectionalLight(Vector(-0.5, -0.5, 1), Colour(50, 50, 50));
+	// scene.add_light(l1);
 }
 
 
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 1024;
-	int height = 1024;
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 	
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 2.0f, -12.0f);
+	Vertex position(2.0f, 2.0f, -50.0f);
 	Vector lookat(0.0f, -0.1f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.5f, position, lookat, up);
