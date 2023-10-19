@@ -35,6 +35,7 @@ public:
 	void triangulatePolygon(int* P, int* normals, int n);
 	Vector getTriangleNormal(TriangleIndex t);
 	void addTriangle(TriangleIndex t, int* P, int* normals);
+	bool intersectsTriangle(Vertex ray, int t, Vector normal);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}

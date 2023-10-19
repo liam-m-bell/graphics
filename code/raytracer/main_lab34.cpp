@@ -49,10 +49,25 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-  Sphere *sp = new Sphere(Vertex(0.0f,0.0f,8.0f),1.0f);
-  FalseColour *fm = new FalseColour();
-  sp->set_material(fm);
+  Sphere *sp = new Sphere(Vertex(0.0f,0.0f,2.0f),1.0f);
+  
+  PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
+  Transform * transform = new Transform(1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, -10.0f,
+    0.0f, 1.0f, 0.0f, 20.0f,
+    0.0f, 0.0f, 0.0f, 1.0f);
+  pm->apply_transform(*transform);
+
+
+  FalseColour *spmat = new FalseColour();
+  FalseColour *pmmat = new FalseColour();
+
+  sp->set_material(spmat);
+  pm->set_material(pmmat);
+
   scene.add_object(sp);
+  scene.add_object(pm);
+  
 }
 
 
@@ -72,7 +87,7 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(0.0f, 0.0f, 0.0f);
+	Vertex position(0.0f, 2.0f, -50.0f);
 	Vector lookat(0.0f, 0.0f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.5f, position, lookat, up);

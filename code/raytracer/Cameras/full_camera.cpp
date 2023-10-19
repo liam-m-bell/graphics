@@ -30,7 +30,8 @@ FullCamera::FullCamera(float f, Vertex& p_position, Vector& p_lookat, Vector& p_
     lookat = p_lookat;
 	up = p_up;
 
-	w = -lookat;
+	w = position - lookat;
+	w.normalise();
     up.cross(w, u);
 	u.normalise();
 	w.cross(u, v);
