@@ -20,7 +20,15 @@ public:
 
 	}
 
+	Phong(Colour p_ambient, Colour p_diffuse, Colour p_specular, int p_power);
+
+	Colour kAmbient;
+	Colour kDiffuse;
+	Colour kSpecular;
+	int n;
+
 	Colour compute_once(Ray& viewer, Hit& hit, int recurse);
 	Colour compute_per_light(Vector& viewer, Hit& hit, Vector& ldir);
+
 
 };

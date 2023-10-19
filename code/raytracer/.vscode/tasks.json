@@ -17,7 +17,9 @@
                 ".\\Core\\hit.cpp",
                 ".\\Materials\\falsecolour_material.cpp",
                 ".\\Objects\\polymesh_object.cpp",
-                ".\\Objects\\plane_object.cpp"
+                ".\\Objects\\plane_object.cpp",
+                ".\\Materials\\phong_material.cpp",
+                ".\\Lights\\directional_light.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"
