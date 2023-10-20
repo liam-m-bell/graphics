@@ -139,9 +139,6 @@ PolyMesh::PolyMesh(char* file, bool smooth)
 
             triangulatePolygon(faceVerticies, faceVertexNormals, fvCount);
         }
-        else{
-
-        }
     }
     modelFile.close();
 }
@@ -175,41 +172,59 @@ bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
 
 Hit* PolyMesh::intersection(Ray ray)
 {
+    float best_t = 100000000.0f;
+    Hit* best_hit = 0;
     for (int i = 0; i < triangle_count; i++){
         Vector normal = triangleNormals[i];
 
-        float V = normal.dot(ray.direction);
-        float d = -normal.dot(vertex[(triangle[i])[0]]);
-        float U = normal.dot(ray.position) + d;
+        float V = normal.dot(ray.direction);    
         
         if (V == 0){
             // Parallel, will not intersect
             continue;
         }
         
+        float d = -normal.dot(vertex[(triangle[i])[0]]);
+        float U = normal.dot(ray.position) + d;
         float t = -U / V;
 
         if (t < 0){
             // Intersection behind the ray
             continue;
         }
+        
+        if (t > best_t){
+            continue;
+        }
 
         Vertex P = ray.position + t * ray.direction;
 
-        if (V > 0) {
-            if ((intersectsTriangle(P, i, normal))){
-                
-                Hit* hit = new Hit();
-                hit->entering = true;
-                hit->position = P;
-                hit->t = t;
-                hit->normal = -normal;
-                hit->what = this;
-                hit->next = 0;
-                return hit;
+        if (intersectsTriangle(P, i, normal)){
+            if (best_hit ){
+                delete best_hit;
             }
+
+            Hit* hit = new Hit();
+            hit->entering = true;
+            hit->position = P;
+            hit->t = t;
+            hit->normal = normal;
+            if (hit->normal.dot(ray.direction) > 0.0)
+            {
+                hit->normal.negate();
+            }
+            hit->what = this;
+            hit->next = 0;
+            
+            best_t = t;
+            best_hit = hit;
         }
     }
+
+    if (best_hit){
+        return best_hit;
+    }
+
     return 0;
 }
 
