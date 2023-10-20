@@ -51,8 +51,8 @@ void build_scene(Scene& scene)
 {
 	PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
 	Transform * transform = new Transform(
-		0.5f, 0.0f, 0.0f, -1.0f,
-		0.0f, 0.5f, 0.0f, 1.0f,
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.2f,
 		0.0f, 0.0f, 0.5f, -4.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -71,14 +71,14 @@ void build_scene(Scene& scene)
 	pm->apply_transform(*scaleTransform);
 	pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
-	pm->set_material(new Phong(Colour(20, 20, 20), Colour(80, 80, 80), Colour(5, 5, 5), 10));
+	pm->set_material(new Phong(Colour(200, 200, 200), Colour(240, 240, 240), Colour(20, 20, 20), 20));
 	scene.add_object(pm);
 	
 	Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
 	sp1->set_material(new Phong(Colour(10, 0, 0), Colour(100, 0, 0), Colour(30, 0, 0), 10));
 	scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(1.0f,0.5f,-5.0f),0.5f);
+	Sphere *sp2 = new Sphere(Vertex(1.0f,0.5f,-7.0f),0.5f);
 	sp2->set_material(new Phong(Colour(0, 10, 0), Colour(0, 50, 0), Colour(0, 20, 0), 10));
 	scene.add_object(sp2);
 
