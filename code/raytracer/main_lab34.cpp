@@ -50,12 +50,25 @@ using namespace std;
 void build_scene(Scene& scene)
 {
 	PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
-	Transform * transform = new Transform(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, -10.0f,
-		0.0f, 1.0f, 0.0f, 20.0f,
+	Transform * transform = new Transform(0.5f, 0.0f, 0.0f, -1.0f,
+		0.0f, 0.5f, 0.0f, 0.15f,
+		0.0f, 0.0f, 0.5f, -4.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
+
+	Transform * scaleTransform = new Transform(0.2f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.2f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.2f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	Transform * teapotTransform = new Transform(1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f);
+	
+	pm->apply_transform(*scaleTransform);
+	pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
-	pm->set_material(new FalseColour());
+	pm->set_material(new Phong(Colour(20, 20, 20), Colour(250, 250, 250), Colour(5, 5, 5), 10));
 	scene.add_object(pm);
 	
 	// Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
@@ -70,12 +83,15 @@ void build_scene(Scene& scene)
 	// sp3->set_material(new Phong(Colour(0, 0, 10), Colour(0, 0, 80), Colour(0, 0, 10), 10));
 	// scene.add_object(sp3);
 
-	// Plane *p1 = new Plane(0, -1, 0, 0);
-	// p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
-	// scene.add_object(p1);
+	Plane *p1 = new Plane(0, -1, 0, 0);
+	p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
+	scene.add_object(p1);
 
-	// Light *l1 = new DirectionalLight(Vector(-0.5, -0.5, 1), Colour(50, 50, 50));
-	// scene.add_light(l1);
+	Light *l1 = new DirectionalLight(Vector(-0.5, 0, -1), Colour(15, 15, 15));
+	scene.add_light(l1);
+
+	Light *l2 = new DirectionalLight(Vector(0.5, -0.9, 0.5), Colour(30, 30, 30));
+	scene.add_light(l2);
 }
 
 
@@ -95,8 +111,8 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 2.0f, -50.0f);
-	Vector lookat(0.0f, -0.1f, 1.0f);
+	Vertex position(0.0f, 4.0f, -18.0f);
+	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.5f, position, lookat, up);
 	

@@ -47,7 +47,6 @@ void PolyMesh::addTriangle(TriangleIndex t, int P[], int normals[]){
     //     normal += vertexNormals[normals[i]];
     // }
     Vector normal = getTriangleNormal(triangle[triangle_count]);
-    //normal.normalise();
     triangleNormals.push_back(normal);
 
     triangle_count++;
@@ -71,6 +70,8 @@ void PolyMesh::triangulatePolygon(int P[], int normals[], int n){
 
 PolyMesh::PolyMesh(char* file, bool smooth)
 {
+    this->smooth = smooth;
+
     // Open OBJ
     ifstream modelFile;
     modelFile.open(file);
@@ -180,30 +181,14 @@ Hit* PolyMesh::intersection(Ray ray)
         float V = normal.dot(ray.direction);
         float d = -normal.dot(vertex[(triangle[i])[0]]);
         float U = normal.dot(ray.position) + d;
-        float t = -U / V;
         
         if (V == 0){
             // Parallel, will not intersect
-            if (U < 0.0f)
-            {
-                // Inside
-                Hit* hit1 = new Hit();
-                Hit* hit2 = new Hit();
-                hit1->entering = true;
-                hit1->t = -10000000000.0f; // infinity
-                hit1->what = this;
-                hit2->entering = false;
-                hit2->t = 10000000000.0f; // infinity
-                hit2->what = this;
-                hit1->next = hit2;
-                hit2->next = 0;
-                return hit1;
-            }
-
-            // Outside
             continue;
         }
         
+        float t = -U / V;
+
         if (t < 0){
             // Intersection behind the ray
             continue;
@@ -212,53 +197,17 @@ Hit* PolyMesh::intersection(Ray ray)
         Vertex P = ray.position + t * ray.direction;
 
         if (V > 0) {
-            if (!(intersectsTriangle(P, i, normal))){
-                continue;
+            if ((intersectsTriangle(P, i, normal))){
+                
+                Hit* hit = new Hit();
+                hit->entering = true;
+                hit->position = P;
+                hit->t = t;
+                hit->normal = -normal;
+                hit->what = this;
+                hit->next = 0;
+                return hit;
             }
-
-            Hit* hit1 = new Hit();
-            Hit* hit2 = new Hit();
-            hit1->entering = true;
-            hit1->t = -10000000000.0f; // infinity
-            hit1->what = this;
-
-            hit2->entering = false;
-            hit2->position = P;
-            hit2->t = t;
-            
-            hit2->normal = normal;
-            if (hit2->normal.dot(ray.direction) > 0.0) {
-                hit2->normal.negate();
-            }
-
-            hit2->what = this;
-            hit1->next = hit2;
-            hit2->next = 0;
-            return hit1;
-        }
-        else {
-            if (!(intersectsTriangle(P, i, normal))){
-                continue;
-            }
-
-            Hit* hit1 = new Hit();
-            Hit* hit2 = new Hit();
-            hit1->entering = true;
-            hit1->position = P;
-            hit1->t = t;
-            hit1->normal = normal;
-
-            if (hit1->normal.dot(ray.direction) > 0.0) {
-                hit1->normal.negate();
-            }
-            hit1->what = this;
-
-            hit2->entering = false;
-            hit2->t = 10000000000.0f; // infinity
-            hit2->what = this;
-            hit1->next = hit2;
-            hit2->next = 0;
-            return hit1;
         }
     }
     return 0;
@@ -271,6 +220,7 @@ void PolyMesh::apply_transform(Transform& trans)
         trans.apply(vertex[i]);
     }
 
+    // Update normals
     for (int i = 0; i < triangle_count; i++){
         Vector normal = getTriangleNormal(triangle[i]);
         triangleNormals[i] = normal;

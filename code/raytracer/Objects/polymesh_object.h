@@ -40,6 +40,8 @@ public:
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}
 
+	bool smooth;
+
 	int vertex_count;
 	vector<Vertex> vertex;
 

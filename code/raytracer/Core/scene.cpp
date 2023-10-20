@@ -149,7 +149,7 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		  }
 
 		  // Put the shadow check here, if lit==true and in shadow, set lit=false
-		  float shadowRayStartOffset = 0.0001;
+		  float shadowRayStartOffset = 0.0005;
 		  float shadowLimit = 5;
 		  Vertex shadowRayStart = best_hit->position - shadowRayStartOffset * ldir;
 
