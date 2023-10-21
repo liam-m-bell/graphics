@@ -24,36 +24,36 @@
 #include <string>
 #include <sstream>
 
-// these are core raytracing classes
-#include "core/framebuffer.h"
-#include "core/scene.h"
+// these are Core raytracing classes
+#include "Core/framebuffer.h"
+#include "Core/scene.h"
 
 // classes that contain our objects to be rendered, all derived from Object
-#include "objects/polymesh_object.h"
-#include "objects/sphere_object.h"
-#include "objects/plane_object.h"
+#include "Objects/polymesh_object.h"
+#include "Objects/sphere_object.h"
+#include "Objects/plane_object.h"
 
 // classes that contain our lights, all derived from Light
-#include "lights/directional_light.h"
+#include "Lights/directional_light.h"
 
 // classes that contain the materials applied to an object, all derived from Material
-#include "materials/phong_material.h"
-#include "materials/falsecolour_material.h"
+#include "Materials/phong_material.h"
+#include "Materials/falsecolour_material.h"
 
 //classes that contain cameras, all derived from Camera
-#include "cameras/simple_camera.h"
-#include "cameras/full_camera.h"
+#include "Cameras/simple_camera.h"
+#include "Cameras/full_camera.h"
 
 using namespace std;
 
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
+	PolyMesh *pm = new PolyMesh((char *)"dodecahedron.obj", false);
 	Transform * transform = new Transform(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.2f,
-		0.0f, 0.0f, 0.5f, -4.0f,
+		0.5f, 0.0f, 0.0f, -2.0f,
+		0.0f, 0.5f, 0.0f, 0.4f,
+		0.0f, 0.0f, 0.5f, -5.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	Transform * scaleTransform = new Transform(
@@ -68,10 +68,11 @@ void build_scene(Scene& scene)
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 	
-	pm->apply_transform(*scaleTransform);
-	pm->apply_transform(*teapotTransform);
+	//pm->apply_transform(*scaleTransform);
+	//pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
-	pm->set_material(new Phong(Colour(200, 200, 200), Colour(240, 240, 240), Colour(20, 20, 20), 20));
+	pm->set_material(new Phong(Colour(20, 20, 20), Colour(100, 100, 100), Colour(0, 0, 0), 10));
+	//pm->set_material(new FalseColour());
 	scene.add_object(pm);
 	
 	Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
@@ -93,7 +94,7 @@ void build_scene(Scene& scene)
 	Light *l1 = new DirectionalLight(Vector(-0.5, 0, 0.01), Colour(15, 15, 15));
 	scene.add_light(l1);
 
-	Light *l2 = new DirectionalLight(Vector(0.5, -0.9, 0.8), Colour(50, 50, 50));
+	Light *l2 = new DirectionalLight(Vector(0.1, -0.9, 0.9), Colour(50, 50, 50));
 	scene.add_light(l2);
 }
 
@@ -114,8 +115,8 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(6.0f, 4.0f, -18.0f);
-	Vector lookat(-0.3f, -0.2f, 1.0f);
+	Vertex position(0.0f, 4.0f, -18.0f);
+	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.5f, position, lookat, up);
 	

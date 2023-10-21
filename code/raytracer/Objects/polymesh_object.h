@@ -23,7 +23,7 @@
 #include <vector>
 #include <array>
 
-#include "../core/object.h"
+#include "../Core/object.h"
 
 typedef array<int, 3> TriangleIndex;
 

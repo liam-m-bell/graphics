@@ -2,25 +2,25 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe build active file",
-            "command": "C:\\Program Files (x86)\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin\\g++.exe",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                ".\\Objects\\sphere_object.cpp",
-                ".\\Core\\scene.cpp",
-                ".\\Core\\framebuffer.cpp",
-                ".\\Cameras\\full_camera.cpp",
-                ".\\Core\\hit.cpp",
-                ".\\Materials\\falsecolour_material.cpp",
-                ".\\Objects\\polymesh_object.cpp",
-                ".\\Objects\\plane_object.cpp",
-                ".\\Materials\\phong_material.cpp",
-                ".\\Lights\\directional_light.cpp",
-                ".\\linedrawer.cpp"
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "./Objects/sphere_object.cpp",
+                "./Core/scene.cpp",
+                "./Core/framebuffer.cpp",
+                "./Cameras/full_camera.cpp",
+                "./Core/hit.cpp",
+                "./Materials/falsecolour_material.cpp",
+                "./Objects/polymesh_object.cpp",
+                "./Objects/plane_object.cpp",
+                "./Materials/phong_material.cpp",
+                "./Lights/directional_light.cpp",
+                "./linedrawer.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"

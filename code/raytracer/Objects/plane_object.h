@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "../core/object.h"
+#include "../Core/object.h"
 
 class Plane : public Object
 {

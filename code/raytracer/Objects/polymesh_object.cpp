@@ -32,6 +32,7 @@ Vector PolyMesh::getTriangleNormal(TriangleIndex t){
     Vector a = (vertex[t[1]] - vertex[t[0]]);
     Vector b = (vertex[t[2]] - vertex[t[0]]);
     a.cross(b, normal);
+    normal.normalise();
     return normal;
 }
 
@@ -123,8 +124,10 @@ PolyMesh::PolyMesh(char* file, bool smooth)
 
                 string vertexIndex;
                 getline(vs, vertexIndex, '/');
-                // OBJ starts indexing at one, so correct
-                faceVerticies[fvCount] = stoi(vertexIndex) - 1;
+                if (vertexIndex != ""){
+                    // OBJ starts indexing at one, so correct
+                    faceVerticies[fvCount] = stoi(vertexIndex) - 1;
+                }
 
                 string textureIndex;
                 getline(vs, textureIndex, '/');
@@ -132,7 +135,9 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                 
                 string normalIndex;
                 getline(vs, normalIndex, '/');
-                faceVertexNormals[fvCount] = stoi(normalIndex) -1;
+                if (normalIndex != ""){
+                    faceVertexNormals[fvCount] = stoi(normalIndex) -1;
+                }
 
                 fvCount++;
             }
