@@ -36,32 +36,56 @@ Vector PolyMesh::getTriangleNormal(TriangleIndex t){
     return normal;
 }
 
-void PolyMesh::addTriangle(TriangleIndex t, int P[], int normals[]){
+void PolyMesh::calculateVertexNormals(){
+    for (int i = 0; i < vertex_count; i++){
+        if (vertexNormals[i] == -1){
+            Vector average = Vector(0, 0, 0);
+            for (int face : vertexTriangles[i]){
+                average = average + triangleNormals[face];
+            }
+            average.normalise();
+
+            normals.push_back(average);
+            vertexNormals[i] = normalsCount;
+            normalsCount++;
+        }
+    }
+}
+
+void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[]){
     triangle.push_back({ P[t[0]], P[t[1]], P[t[2]] });
 
-    // Vector normal;
-    // for (int i : t){
-    //     if (normals[i] == -1){
-    //         normal = getTriangleNormal(t);
-    //         break;
-    //     }
-    //     normal += vertexNormals[normals[i]];
-    // }
+    for (int i = 0; i < 3; i++){
+        // Add face to vertex list
+        vertexTriangles[P[t[i]]].push_back(triangle_count);
+
+        // Add vertex normals
+        int normalIndex = N[t[i]];
+        if (normalIndex == -1){
+            // No vertex normal was supplied, so will calculate normal from faces later once all faces are loaded
+            vertexNormals[P[t[i]]] = -1; 
+        }
+        else{
+            vertexNormals[P[t[i]]] = normalIndex;
+        }
+    }
+
+    // Add face normal
     Vector normal = getTriangleNormal(triangle[triangle_count]);
     triangleNormals.push_back(normal);
 
     triangle_count++;
 }
 
-void PolyMesh::triangulatePolygon(int P[], int normals[], int n){
+void PolyMesh::triangulatePolygon(int P[], int N[], int n){
     if (n == 3){
         // Already a triangle
-        addTriangle({0, 1, 2}, P, normals);
+        addTriangle({0, 1, 2}, P, N);
     }
     else if (n == 4){
         // Split quadralateral into two triangles
-        addTriangle({0, 1, 2}, P, normals);
-        addTriangle({0, 2, 3}, P, normals);
+        addTriangle({0, 1, 2}, P, N);
+        addTriangle({0, 2, 3}, P, N);
     }
     else{
         // Not currently implemented for n-polygons, n >= 5 
@@ -73,12 +97,13 @@ PolyMesh::PolyMesh(char* file, bool smooth)
 {
     this->smooth = smooth;
 
+    vertex_count = 0;
+    triangle_count = 0;
+    normalsCount = 0;
+
     // Open OBJ
     ifstream modelFile;
     modelFile.open(file);
-    
-    vertex_count = 0;
-    triangle_count = 0;
 
     string line;
     // Read each line
@@ -93,6 +118,13 @@ PolyMesh::PolyMesh(char* file, bool smooth)
             float x, y, z;
             iss >> x >> y >> z;
             vertex.push_back(Vertex(x, y, z));
+
+            // Add placeholder for vertex normal
+            vertexNormals.push_back(-1);
+
+            // Add placeholder for vertex triangles
+            vertexTriangles.push_back({});
+
             vertex_count++;
         }
         else if (lineHeader == "vt"){
@@ -107,8 +139,8 @@ PolyMesh::PolyMesh(char* file, bool smooth)
             // Vertex normals
             float x, y, z;
             iss >> x >> y >> z;
-            vertexNormals.push_back(Vector(x, y, z));
-            vertexNormalsCount++;
+            normals.push_back(Vector(x, y, z));
+            normalsCount++;
 
         }
         else if (lineHeader == "f"){
@@ -138,6 +170,9 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                 if (normalIndex != ""){
                     faceVertexNormals[fvCount] = stoi(normalIndex) -1;
                 }
+                else{
+                    faceVertexNormals[fvCount] = -1;
+                }
 
                 fvCount++;
             }
@@ -146,6 +181,8 @@ PolyMesh::PolyMesh(char* file, bool smooth)
         }
     }
     modelFile.close();
+
+    calculateVertexNormals();
 }
 
 bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
