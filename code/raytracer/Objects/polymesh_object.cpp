@@ -208,29 +208,6 @@ Vector PolyMesh::getInterpolatedNormal(int t, Vertex P){
     edge.cross(vP, crossProduct);
     float w = crossProduct.length() / 2;
 
-    // Vector m, n, r, s;
-
-    // r = C - A;
-    // s = C - P;
-    // r.cross(s, m);
-    // s = C - B;
-    // r.cross(s, n);
-    // float a = m.length() / n.length();
-
-    // r = A - B;
-    // s = A - P;
-    // r.cross(s, m);
-    // s = A - C;
-    // r.cross(s, n);
-    // float b = m.length() / n.length();
-
-    // r = B - C;
-    // s = B - P;
-    // r.cross(s, m);
-    // s = B - A;
-    // r.cross(s, n);
-    // float c = m.length() / n.length();
-
     Vector normal = u * normals[vertexNormals[tri[0]]] + v * normals[vertexNormals[tri[1]]] + w * normals[vertexNormals[tri[2]]];
 
     normal.normalise();

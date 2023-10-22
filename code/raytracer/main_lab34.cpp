@@ -49,7 +49,7 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	PolyMesh *pm = new PolyMesh((char *)"deer-low.obj", true);
+	PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
 	Transform * transform = new Transform(
 		0.5f, 0.0f, 0.0f, -2.0f,
 		0.0f, 0.5f, 0.0f, 0.5f,
@@ -69,10 +69,9 @@ void build_scene(Scene& scene)
 		0.0f, 0.0f, 0.0f, 1.0f);
 	
 	pm->apply_transform(*scaleTransform);
-	//pm->apply_transform(*teapotTransform);
+	pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
 	pm->set_material(new Phong(Colour(20, 20, 20), Colour(100, 100, 100), Colour(0, 0, 0), 10));
-	//pm->set_material(new FalseColour());
 	scene.add_object(pm);
 	
 	Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
