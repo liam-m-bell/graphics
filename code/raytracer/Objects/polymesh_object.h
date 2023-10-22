@@ -37,6 +37,7 @@ public:
 	void addTriangle(TriangleIndex t, int* P, int* normals);
 	bool intersectsTriangle(Vertex ray, int t, Vector normal);
 	void calculateVertexNormals();
+	Vector getInterpolatedNormal(int t, Vertex P);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}

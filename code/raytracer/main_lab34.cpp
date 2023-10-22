@@ -49,17 +49,17 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	PolyMesh *pm = new PolyMesh((char *)"dodecahedron.obj", false);
+	PolyMesh *pm = new PolyMesh((char *)"deer-low.obj", true);
 	Transform * transform = new Transform(
 		0.5f, 0.0f, 0.0f, -2.0f,
-		0.0f, 0.5f, 0.0f, 0.4f,
+		0.0f, 0.5f, 0.0f, 0.5f,
 		0.0f, 0.0f, 0.5f, -5.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	Transform * scaleTransform = new Transform(
-		0.2f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.2f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.2f, 0.0f,
+		0.15f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.15f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.15f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	Transform * teapotTransform = new Transform(
@@ -68,7 +68,7 @@ void build_scene(Scene& scene)
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 	
-	//pm->apply_transform(*scaleTransform);
+	pm->apply_transform(*scaleTransform);
 	//pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
 	pm->set_material(new Phong(Colour(20, 20, 20), Colour(100, 100, 100), Colour(0, 0, 0), 10));
@@ -91,7 +91,7 @@ void build_scene(Scene& scene)
 	p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
 	scene.add_object(p1);
 
-	Light *l1 = new DirectionalLight(Vector(-0.5, 0, 0.01), Colour(15, 15, 15));
+	Light *l1 = new DirectionalLight(Vector(-0.5, 0, 0.1), Colour(15, 15, 15));
 	scene.add_light(l1);
 
 	Light *l2 = new DirectionalLight(Vector(0.1, -0.9, 0.9), Colour(50, 50, 50));

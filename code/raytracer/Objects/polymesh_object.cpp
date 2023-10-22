@@ -182,7 +182,59 @@ PolyMesh::PolyMesh(char* file, bool smooth)
     }
     modelFile.close();
 
+    // Fill in any vertex normals which were not in the file
     calculateVertexNormals();
+}
+
+Vector PolyMesh::getInterpolatedNormal(int t, Vertex P){
+    TriangleIndex tri = triangle[t];
+    Vertex v0 = vertex[tri[0]];
+    Vertex v1 = vertex[tri[1]];
+    Vertex v2 = vertex[tri[2]];
+
+    Vector crossProduct;
+    Vector edge = v2 - v1;
+    Vector vP = P - v1;
+    edge.cross(vP, crossProduct);
+    float u = crossProduct.length() / 2;
+
+    edge = v0 - v2;
+    vP = P - v2;
+    edge.cross(vP, crossProduct);
+    float v = crossProduct.length() / 2;
+
+    edge = v1 - v0;
+    vP = P - v0;
+    edge.cross(vP, crossProduct);
+    float w = crossProduct.length() / 2;
+
+    // Vector m, n, r, s;
+
+    // r = C - A;
+    // s = C - P;
+    // r.cross(s, m);
+    // s = C - B;
+    // r.cross(s, n);
+    // float a = m.length() / n.length();
+
+    // r = A - B;
+    // s = A - P;
+    // r.cross(s, m);
+    // s = A - C;
+    // r.cross(s, n);
+    // float b = m.length() / n.length();
+
+    // r = B - C;
+    // s = B - P;
+    // r.cross(s, m);
+    // s = B - A;
+    // r.cross(s, n);
+    // float c = m.length() / n.length();
+
+    Vector normal = u * normals[vertexNormals[tri[0]]] + v * normals[vertexNormals[tri[1]]] + w * normals[vertexNormals[tri[2]]];
+
+    normal.normalise();
+    return normal;
 }
 
 bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
@@ -250,7 +302,14 @@ Hit* PolyMesh::intersection(Ray ray)
             hit->entering = true;
             hit->position = P;
             hit->t = t;
-            hit->normal = normal;
+
+            if (smooth){
+                hit->normal = getInterpolatedNormal(i, P);
+            }
+            else{
+                hit->normal = normal;
+            }
+
             if (hit->normal.dot(ray.direction) > 0.0)
             {
                 hit->normal.negate();
@@ -277,9 +336,14 @@ void PolyMesh::apply_transform(Transform& trans)
         trans.apply(vertex[i]);
     }
 
-    // Update normals
+    // Update face normals
     for (int i = 0; i < triangle_count; i++){
         Vector normal = getTriangleNormal(triangle[i]);
         triangleNormals[i] = normal;
+    }
+
+    // Update vertex normals
+    for (int i = 0; i < normalsCount; i++){
+        trans.apply(normals[i]);
     }
 }
