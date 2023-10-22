@@ -36,6 +36,8 @@ public:
 	Vector getTriangleNormal(TriangleIndex t);
 	void addTriangle(TriangleIndex t, int* P, int* normals);
 	bool intersectsTriangle(Vertex ray, int t, Vector normal);
+	void calculateVertexNormals();
+	Vector getInterpolatedNormal(int t, Vertex P);
 
     PolyMesh(char *file, bool smooth);
 	~PolyMesh(){}
@@ -45,15 +47,17 @@ public:
 	int vertex_count;
 	vector<Vertex> vertex;
 
-	int triangle_count;
-	vector<TriangleIndex> triangle;
-
 	int textureCoordsCount;
 	vector<Vertex> textureCoords;
 
-	int vertexNormalsCount;
-	vector<Vector> vertexNormals;
+	int normalsCount;
+	vector<Vector> normals;
+
+	int triangle_count;
+	vector<TriangleIndex> triangle;
 
 	vector<Vector> triangleNormals;
-	
+
+	vector<int> vertexNormals; 
+	vector<vector<int>> vertexTriangles;
 };

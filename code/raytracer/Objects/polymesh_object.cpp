@@ -36,32 +36,56 @@ Vector PolyMesh::getTriangleNormal(TriangleIndex t){
     return normal;
 }
 
-void PolyMesh::addTriangle(TriangleIndex t, int P[], int normals[]){
+void PolyMesh::calculateVertexNormals(){
+    for (int i = 0; i < vertex_count; i++){
+        if (vertexNormals[i] == -1){
+            Vector average = Vector(0, 0, 0);
+            for (int face : vertexTriangles[i]){
+                average = average + triangleNormals[face];
+            }
+            average.normalise();
+
+            normals.push_back(average);
+            vertexNormals[i] = normalsCount;
+            normalsCount++;
+        }
+    }
+}
+
+void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[]){
     triangle.push_back({ P[t[0]], P[t[1]], P[t[2]] });
 
-    // Vector normal;
-    // for (int i : t){
-    //     if (normals[i] == -1){
-    //         normal = getTriangleNormal(t);
-    //         break;
-    //     }
-    //     normal += vertexNormals[normals[i]];
-    // }
+    for (int i = 0; i < 3; i++){
+        // Add face to vertex list
+        vertexTriangles[P[t[i]]].push_back(triangle_count);
+
+        // Add vertex normals
+        int normalIndex = N[t[i]];
+        if (normalIndex == -1){
+            // No vertex normal was supplied, so will calculate normal from faces later once all faces are loaded
+            vertexNormals[P[t[i]]] = -1; 
+        }
+        else{
+            vertexNormals[P[t[i]]] = normalIndex;
+        }
+    }
+
+    // Add face normal
     Vector normal = getTriangleNormal(triangle[triangle_count]);
     triangleNormals.push_back(normal);
 
     triangle_count++;
 }
 
-void PolyMesh::triangulatePolygon(int P[], int normals[], int n){
+void PolyMesh::triangulatePolygon(int P[], int N[], int n){
     if (n == 3){
         // Already a triangle
-        addTriangle({0, 1, 2}, P, normals);
+        addTriangle({0, 1, 2}, P, N);
     }
     else if (n == 4){
         // Split quadralateral into two triangles
-        addTriangle({0, 1, 2}, P, normals);
-        addTriangle({0, 2, 3}, P, normals);
+        addTriangle({0, 1, 2}, P, N);
+        addTriangle({0, 2, 3}, P, N);
     }
     else{
         // Not currently implemented for n-polygons, n >= 5 
@@ -73,12 +97,13 @@ PolyMesh::PolyMesh(char* file, bool smooth)
 {
     this->smooth = smooth;
 
+    vertex_count = 0;
+    triangle_count = 0;
+    normalsCount = 0;
+
     // Open OBJ
     ifstream modelFile;
     modelFile.open(file);
-    
-    vertex_count = 0;
-    triangle_count = 0;
 
     string line;
     // Read each line
@@ -93,6 +118,13 @@ PolyMesh::PolyMesh(char* file, bool smooth)
             float x, y, z;
             iss >> x >> y >> z;
             vertex.push_back(Vertex(x, y, z));
+
+            // Add placeholder for vertex normal
+            vertexNormals.push_back(-1);
+
+            // Add placeholder for vertex triangles
+            vertexTriangles.push_back({});
+
             vertex_count++;
         }
         else if (lineHeader == "vt"){
@@ -107,8 +139,8 @@ PolyMesh::PolyMesh(char* file, bool smooth)
             // Vertex normals
             float x, y, z;
             iss >> x >> y >> z;
-            vertexNormals.push_back(Vector(x, y, z));
-            vertexNormalsCount++;
+            normals.push_back(Vector(x, y, z));
+            normalsCount++;
 
         }
         else if (lineHeader == "f"){
@@ -138,6 +170,9 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                 if (normalIndex != ""){
                     faceVertexNormals[fvCount] = stoi(normalIndex) -1;
                 }
+                else{
+                    faceVertexNormals[fvCount] = -1;
+                }
 
                 fvCount++;
             }
@@ -146,6 +181,60 @@ PolyMesh::PolyMesh(char* file, bool smooth)
         }
     }
     modelFile.close();
+
+    // Fill in any vertex normals which were not in the file
+    calculateVertexNormals();
+}
+
+Vector PolyMesh::getInterpolatedNormal(int t, Vertex P){
+    TriangleIndex tri = triangle[t];
+    Vertex v0 = vertex[tri[0]];
+    Vertex v1 = vertex[tri[1]];
+    Vertex v2 = vertex[tri[2]];
+
+    Vector crossProduct;
+    Vector edge = v2 - v1;
+    Vector vP = P - v1;
+    edge.cross(vP, crossProduct);
+    float u = crossProduct.length() / 2;
+
+    edge = v0 - v2;
+    vP = P - v2;
+    edge.cross(vP, crossProduct);
+    float v = crossProduct.length() / 2;
+
+    edge = v1 - v0;
+    vP = P - v0;
+    edge.cross(vP, crossProduct);
+    float w = crossProduct.length() / 2;
+
+    // Vector m, n, r, s;
+
+    // r = C - A;
+    // s = C - P;
+    // r.cross(s, m);
+    // s = C - B;
+    // r.cross(s, n);
+    // float a = m.length() / n.length();
+
+    // r = A - B;
+    // s = A - P;
+    // r.cross(s, m);
+    // s = A - C;
+    // r.cross(s, n);
+    // float b = m.length() / n.length();
+
+    // r = B - C;
+    // s = B - P;
+    // r.cross(s, m);
+    // s = B - A;
+    // r.cross(s, n);
+    // float c = m.length() / n.length();
+
+    Vector normal = u * normals[vertexNormals[tri[0]]] + v * normals[vertexNormals[tri[1]]] + w * normals[vertexNormals[tri[2]]];
+
+    normal.normalise();
+    return normal;
 }
 
 bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
@@ -213,7 +302,14 @@ Hit* PolyMesh::intersection(Ray ray)
             hit->entering = true;
             hit->position = P;
             hit->t = t;
-            hit->normal = normal;
+
+            if (smooth){
+                hit->normal = getInterpolatedNormal(i, P);
+            }
+            else{
+                hit->normal = normal;
+            }
+
             if (hit->normal.dot(ray.direction) > 0.0)
             {
                 hit->normal.negate();
@@ -240,9 +336,14 @@ void PolyMesh::apply_transform(Transform& trans)
         trans.apply(vertex[i]);
     }
 
-    // Update normals
+    // Update face normals
     for (int i = 0; i < triangle_count; i++){
         Vector normal = getTriangleNormal(triangle[i]);
         triangleNormals[i] = normal;
+    }
+
+    // Update vertex normals
+    for (int i = 0; i < normalsCount; i++){
+        trans.apply(normals[i]);
     }
 }
