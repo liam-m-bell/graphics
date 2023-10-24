@@ -49,7 +49,7 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
+	PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
 	Transform * transform = new Transform(
 		0.5f, 0.0f, 0.0f, -2.0f,
 		0.0f, 0.5f, 0.0f, 0.5f,
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 	Vertex position(0.0f, 4.0f, -18.0f);
 	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
-	Camera* camera = new FullCamera(0.5f, position, lookat, up);
+	Camera* camera = new FullCamera(0.9f, position, lookat, up);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

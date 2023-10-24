@@ -151,6 +151,8 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		  // Put the shadow check here, if lit==true and in shadow, set lit=false
 		  float shadowRayStartOffset = 0.0005;
 		  float shadowLimit = 5;
+
+		  // Adjust starting point of shadow ray to start just outside the object to stop self intersection
 		  Vertex shadowRayStart = best_hit->position - shadowRayStartOffset * ldir;
 
 		  if (shadowtrace(Ray(shadowRayStart, -ldir), shadowLimit) && lit){

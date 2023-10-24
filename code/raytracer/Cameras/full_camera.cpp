@@ -43,6 +43,7 @@ void FullCamera::get_ray_offset(int p_x, int p_y, float p_ox, float p_oy, Ray &p
 
 void FullCamera::get_ray_pixel(int p_x, int p_y, Ray &ray)
 {
+	// Get direction of projected ray for a pixel
 	float fx = fov * (((float)p_x + 0.5f)/(float)width - 0.5f);
   	float fy = fov * (0.5f - ((float)p_y + 0.5f)/(float)height);
 

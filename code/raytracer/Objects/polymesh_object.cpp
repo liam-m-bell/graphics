@@ -171,6 +171,7 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                     faceVertexNormals[fvCount] = stoi(normalIndex) -1;
                 }
                 else{
+                    // If no normal listed set to a placeholder index value
                     faceVertexNormals[fvCount] = -1;
                 }
 
@@ -187,6 +188,9 @@ PolyMesh::PolyMesh(char* file, bool smooth)
 }
 
 Vector PolyMesh::getInterpolatedNormal(int t, Vertex P){
+    // Uses barycentric coordinates to interpolate the normal vectors for a point in a triangle
+    // Method adapated from www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates.html
+
     TriangleIndex tri = triangle[t];
     Vertex v0 = vertex[tri[0]];
     Vertex v1 = vertex[tri[1]];
@@ -208,6 +212,7 @@ Vector PolyMesh::getInterpolatedNormal(int t, Vertex P){
     edge.cross(vP, crossProduct);
     float w = crossProduct.length() / 2;
 
+    // Calculate interpolated normal using the u, v and w values
     Vector normal = u * normals[vertexNormals[tri[0]]] + v * normals[vertexNormals[tri[1]]] + w * normals[vertexNormals[tri[2]]];
 
     normal.normalise();
@@ -221,6 +226,7 @@ bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
     Vector v1 = vertex[tri[2]] - vertex[tri[1]];
     Vector v2 = vertex[tri[0]] - vertex[tri[2]];
 
+    // Check if the point is on the 'inside' of each of the edges of the triangle by checking cross product is in same direction as the normal
     Vector a, b, c;
 
     (p - vertex[tri[0]]).cross(v0, a);
@@ -243,8 +249,10 @@ bool PolyMesh::intersectsTriangle(Vertex p, int t, Vector normal){
 
 Hit* PolyMesh::intersection(Ray ray)
 {
+    // Find closest intersection
     float best_t = 100000000.0f;
     Hit* best_hit = 0;
+
     for (int i = 0; i < triangle_count; i++){
         Vector normal = triangleNormals[i];
 
@@ -265,12 +273,15 @@ Hit* PolyMesh::intersection(Ray ray)
         }
         
         if (t > best_t){
+            // Not closer than best intersection
             continue;
         }
 
+        // Intersection point
         Vertex P = ray.position + t * ray.direction;
 
         if (intersectsTriangle(P, i, normal)){
+            // Intersects
             if (best_hit ){
                 delete best_hit;
             }
@@ -281,16 +292,20 @@ Hit* PolyMesh::intersection(Ray ray)
             hit->t = t;
 
             if (smooth){
+                // Use Phong Shading if 'smooth' set to true
                 hit->normal = getInterpolatedNormal(i, P);
             }
             else{
+                // Use face normals
                 hit->normal = normal;
             }
 
+            // Render both sides
             if (hit->normal.dot(ray.direction) > 0.0)
             {
                 hit->normal.negate();
             }
+            
             hit->what = this;
             hit->next = 0;
             
