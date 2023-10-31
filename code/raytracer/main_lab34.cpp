@@ -49,51 +49,56 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	PolyMesh *pm = new PolyMesh((char *)"teapot-low.obj", false);
-	Transform * transform = new Transform(
-		0.5f, 0.0f, 0.0f, -2.0f,
-		0.0f, 0.5f, 0.0f, 0.5f,
-		0.0f, 0.0f, 0.5f, -5.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-	Transform * scaleTransform = new Transform(
-		0.15f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.15f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.15f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
 	Transform * teapotTransform = new Transform(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
-	
-	pm->apply_transform(*scaleTransform);
+
+	PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
+	Transform * transform = new Transform(
+		0.12f, 0.0f, 0.0f, -3.0f,
+		0.0f, 0.12f, 0.0f, 0.2f,
+		0.0f, 0.0f, 0.12f, -6.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
 	pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
-	pm->set_material(new Phong(Colour(20, 20, 20), Colour(100, 100, 100), Colour(0, 0, 0), 10));
+	pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
 	scene.add_object(pm);
+
+	PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
+	Transform * transform2 = new Transform(
+		0.12f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.12f, 0.0f, 0.2f,
+		0.0f, 0.0f, 0.12f, -11.5f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	pm2->apply_transform(*teapotTransform);
+	pm2->apply_transform(*transform2);
+	pm2->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	scene.add_object(pm2);
 	
-	Sphere *sp1 = new Sphere(Vertex(3.0f,1.0f,2.0f),1.0f);
-	sp1->set_material(new Phong(Colour(10, 0, 0), Colour(100, 0, 0), Colour(30, 0, 0), 10));
+	Sphere *sp1 = new Sphere(Vertex(4.0f,1.0f,2.0f),1.0f);
+	sp1->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.5, 0, 0), Colour(0.3, 0, 0), 10));
 	scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(1.0f,0.5f,-7.0f),0.5f);
-	sp2->set_material(new Phong(Colour(0, 10, 0), Colour(0, 50, 0), Colour(0, 20, 0), 10));
+	Sphere *sp2 = new Sphere(Vertex(2.0f,0.5f,-4.0f),0.5f);
+	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.5, 0), Colour(0, 0.1, 0), 10));
 	scene.add_object(sp2);
 
-	Sphere *sp3 = new Sphere(Vertex(1.0f,1.5f,4.0f),1.5f);
-	sp3->set_material(new Phong(Colour(0, 0, 10), Colour(0, 0, 80), Colour(0, 0, 10), 10));
+	Sphere *sp3 = new Sphere(Vertex(2.0f,1.5f,4.0f),1.5f);
+	sp3->set_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.5), Colour(0, 0, 0.1), 10));
 	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 50), Colour(30, 20, 80), Colour(0, 0, 10), 10));
+	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0, 0, 0.1), 10));
 	scene.add_object(p1);
 
-	Light *l1 = new DirectionalLight(Vector(-0.5, 0, 0.1), Colour(15, 15, 15));
+	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l1);
 
-	Light *l2 = new DirectionalLight(Vector(0.1, -0.9, 0.9), Colour(50, 50, 50));
+	Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	scene.add_light(l2);
 }
 
@@ -114,10 +119,10 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(0.0f, 4.0f, -18.0f);
+	Vertex position(0.0f, 4.0f, -20.0f);
 	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
-	Camera* camera = new FullCamera(0.9f, position, lookat, up);
+	Camera* camera = new FullCamera(0.75f, position, lookat, up);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);
