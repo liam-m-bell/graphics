@@ -28,6 +28,7 @@ Quadratic::Quadratic(float a, float b, float c, float d, float e, float f, float
 
 Hit *Quadratic::intersection(Ray ray)
 {
+  // Get hit
   return 0;
 }
 
