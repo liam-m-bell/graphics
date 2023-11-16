@@ -22,15 +22,39 @@
 
 GlobalMaterial::GlobalMaterial(Environment* p_env, Colour p_reflect_weight, Colour p_refract_weight, float p_ior)
 {
-
+	environment = p_env;
+	reflect_weight = p_reflect_weight;
+	refract_weight = p_refract_weight;
+	ior = p_ior;
 }
 
 
 // reflection and recursion computation
 Colour GlobalMaterial::compute_once(Ray& viewer, Hit& hit, int recurse)
 {
-	Colour result;
+	Colour result = Colour(0, 0, 0);
+	
+	if (recurse != 0){
 
+		//Reflection
+		Ray reflection;
+		Vector viewDir = viewer.direction;
+		viewDir.normalise();
+
+		reflection.direction = viewDir - (2.0f * (viewDir.dot(hit.normal)) * hit.normal);
+		reflection.direction.normalise();
+		// Start a little bit off the surface to stop self intersection
+		float reflectedRayStartOffset = 0.0005;
+		reflection.position = hit.position + (reflectedRayStartOffset * reflection.direction);
+
+		float depth = 4;
+		environment->raytrace(reflection, recurse - 1, result, depth);
+
+		result.scale(reflect_weight);
+
+
+		// Refraction
+	}
 
 	return result;
 }
