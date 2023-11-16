@@ -21,40 +21,48 @@
 FullCamera::FullCamera()
 {
     fov = 0.5;
+	position = Vertex(0.0f, 0.0f, 0.0f, 1.0f);
+	lookat = Vector(0.0f, 0.0f, 1.0f);
+	up = Vector(0.0f, 1.0f, 0.0f);
+	right = Vector(1.0f, 0.0f, 0.0f);
 }
 
 FullCamera::FullCamera(float f, Vertex& p_position, Vector& p_lookat, Vector& p_up)
 {
-    fov = f;
-    position = p_position;
-    lookat = p_lookat;
+	fov = f;
+	position = p_position;
+	lookat = p_lookat;
 	up = p_up;
-
-	w = position - lookat;
-	w.normalise();
-    up.cross(w, u);
-	u.normalise();
-	w.cross(u, v);
+	up.cross(lookat, right);
+	lookat.cross(right, up);
+	up.normalise();
+	right.normalise();
+	lookat.normalise();
 }
 
 void FullCamera::get_ray_offset(int p_x, int p_y, float p_ox, float p_oy, Ray &p_ray){
+	float fx = (p_ox + (float)p_x + 0.5f) / (float)width;
+	float fy = (p_oy + (float)p_y + 0.5f) / (float)height;
 
+	p_ray.position = position;
+	p_ray.direction = ((fx - 0.5f) * right) + ((0.5f - fy) * up) + (fov * lookat);
+	p_ray.direction.normalise();
 }
 
 void FullCamera::get_ray_pixel(int p_x, int p_y, Ray &ray)
 {
 	// Get direction of projected ray for a pixel
-	float fx = fov * (((float)p_x + 0.5f)/(float)width - 0.5f);
-  	float fy = fov * (0.5f - ((float)p_y + 0.5f)/(float)height);
+	float fx = ((float)p_x + 0.5f)/(float)width;
+	float fy = ((float)p_y + 0.5f)/(float)height;
 
 	ray.position = position;
-	ray.direction = fx * u + fy * v + lookat;
+	ray.direction = ((fx - 0.5f) * right) + ((0.5f - fy) * up) + (fov * lookat);
 	ray.direction.normalise();
 }
 
 void FullCamera::render(Environment& env, FrameBuffer& fb)
 {
-    width = fb.width;
+	width = fb.width;
 	height = fb.height;
 
 	for (int y = 0; y < height; y += 1)
