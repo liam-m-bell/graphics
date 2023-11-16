@@ -39,6 +39,8 @@
 // classes that contain the materials applied to an object, all derived from Material
 #include "Materials/phong_material.h"
 #include "Materials/falsecolour_material.h"
+#include "Materials/compound_material.h"
+#include "Materials/global_material.h"
 
 //classes that contain cameras, all derived from Camera
 #include "Cameras/simple_camera.h"
@@ -65,7 +67,7 @@ void build_scene(Scene& scene)
 	pm->apply_transform(*teapotTransform);
 	pm->apply_transform(*transform);
 	pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
-	scene.add_object(pm);
+	//scene.add_object(pm);
 
 	PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
 	Transform * transform2 = new Transform(
@@ -76,19 +78,31 @@ void build_scene(Scene& scene)
 
 	pm2->apply_transform(*teapotTransform);
 	pm2->apply_transform(*transform2);
-	pm2->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
-	scene.add_object(pm2);
+	pm2->set_material(new Phong(Colour(0.1, 0.1, 0.1), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	//scene.add_object(pm2);
 	
-	Sphere *sp1 = new Sphere(Vertex(4.0f,1.0f,2.0f),1.0f);
-	sp1->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.5, 0, 0), Colour(0.3, 0, 0), 10));
+	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
+	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(2.0f,0.5f,-4.0f),0.5f);
-	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.5, 0), Colour(0, 0.1, 0), 10));
+	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
+	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
 	scene.add_object(sp2);
 
-	Sphere *sp3 = new Sphere(Vertex(2.0f,1.5f,4.0f),1.5f);
-	sp3->set_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.5), Colour(0, 0, 0.1), 10));
+	
+
+	Plane *p0 = new Plane(0, 0, 1, -20);
+	CompoundMaterial *p0mat = new CompoundMaterial(2);
+	p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
+	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
+	p0->set_material(p0mat);
+	scene.add_object(p0);
+
+	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
+	CompoundMaterial *sp3mat = new CompoundMaterial(2);
+	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
+	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.1f));
+	sp3->set_material(sp3mat);
 	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
@@ -100,6 +114,9 @@ void build_scene(Scene& scene)
 
 	Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	scene.add_light(l2);
+
+	Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
+	scene.add_light(l3);
 }
 
 
@@ -119,7 +136,7 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(0.0f, 4.0f, -20.0f);
+	Vertex position(2.0f, 6.0f, -12.0f);
 	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);

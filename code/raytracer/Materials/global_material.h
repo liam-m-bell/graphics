@@ -24,8 +24,8 @@
 
 class GlobalMaterial: public Material {
 public:
-	Colour reflect_weight;
-	Colour refract_weight;
+	Colour reflectWeight;
+	Colour refractWeight;
 	float ior;
 	Environment* environment;
 
@@ -35,5 +35,9 @@ public:
 
 	Colour compute_per_light(Vector& viewer, Hit& hit, Vector& ldir);
 
+private:
+	Colour reflection(Vector& view, Hit& hit, int recurse);
+
+	Colour refraction(Vector& view, Hit& hit, int recurse);
 };
 
