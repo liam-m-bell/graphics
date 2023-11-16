@@ -78,22 +78,31 @@ void build_scene(Scene& scene)
 
 	pm2->apply_transform(*teapotTransform);
 	pm2->apply_transform(*transform2);
-	pm2->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	pm2->set_material(new Phong(Colour(0.1, 0.1, 0.1), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
 	//scene.add_object(pm2);
 	
-	Sphere *sp1 = new Sphere(Vertex(3.5f,1.0f,0.5f),1.0f);
-	sp1->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.5, 0, 0), Colour(0.3, 0, 0), 10));
+	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
+	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(2.0f,0.5f,-2.0f),0.5f);
-	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.5, 0), Colour(0, 0.1, 0), 10));
+	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
+	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
 	scene.add_object(sp2);
 
-	Sphere *sp3 = new Sphere(Vertex(2.0f,2.0f,4.0f),2.0f);
+	
+
+	Plane *p0 = new Plane(0, 0, 1, -20);
+	CompoundMaterial *p0mat = new CompoundMaterial(2);
+	p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
+	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
+	p0->set_material(p0mat);
+	scene.add_object(p0);
+
+	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
 	CompoundMaterial *sp3mat = new CompoundMaterial(2);
-	sp3mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.1), Colour(0, 0, 0.1), 10));
-	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.7, 0.7, 0.7), Colour(0.5, 0.5, 0.5), 0.5f));
-	sp3->set_material(new GlobalMaterial(&scene, Colour(0.8, 0.8, 0.8), Colour(0.5, 0.5, 0.5), 0.5f));
+	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
+	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.1f));
+	sp3->set_material(sp3mat);
 	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
@@ -114,8 +123,8 @@ void build_scene(Scene& scene)
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 2048;
-	int height = 2048;
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 	
@@ -127,7 +136,7 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 4.0f, -8.0f);
+	Vertex position(2.0f, 6.0f, -12.0f);
 	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);

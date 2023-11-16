@@ -6,6 +6,7 @@
         "iterator": "cpp",
         "string_view": "cpp",
         "random": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "cmath": "cpp"
     }
 }
