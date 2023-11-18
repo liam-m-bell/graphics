@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 6.0f, -12.0f);
+	Vertex position(2.0f, 6.0f, -8.0f);
 	Vector lookat(0.0f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);

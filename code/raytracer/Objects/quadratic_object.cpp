@@ -23,17 +23,137 @@ using namespace std;
 
 Quadratic::Quadratic(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j)
 {
-  next = (Object *)0;
+	next = (Object *)0;
+
+	transform = Transform(a, b, c, d, b, e, f, g, c, f, h, i, d, g, i, j);
+
 }
 
 Hit *Quadratic::intersection(Ray ray)
 {
-  // Get hit
-  return 0;
+	float a = transform.matrix[0][0];
+    float b = transform.matrix[0][1];
+    float c = transform.matrix[0][2];
+    float d = transform.matrix[0][3];
+    float e = transform.matrix[1][1];
+    float f = transform.matrix[1][2];
+    float g = transform.matrix[1][3];
+    float h = transform.matrix[2][2];
+    float i = transform.matrix[2][3];
+    float j = transform.matrix[3][3];
+
+	Vector P = ray.position;
+	Vector D = ray.direction;
+
+	float A = a * pow(D.x, 2) + 
+		2 * b * D.x * D.y +
+		2 * c * D.x * D.z +
+		e * pow(D.y, 2) +
+		2 * f * D.y * D.z +
+		g * pow(D.z, 2);
+
+	float B = 2 * a * P.x * D.x +
+		2 * b * (P.x * D.y + D.x * P.y) +
+		c * (P.x * D.z + D.x * P.z) +
+		d * D.x +
+		e * P.y * D.y +
+		f * (P.y * D.z + D.y * P.z) +
+		g * D.y +
+		h * P.z + D.z +
+		i * D.z;
+
+	float C = a * pow(P.x, 2) +
+		2 * b * P.x * P.y +
+		2 * c * P.x * P.z +
+		2 * d * P.x +
+		e * pow(P.y, 2) +
+		2 * f * P.y * P.z +
+		2 * g * P.y +
+		h * pow(P.z, 2) +
+		2 * i * P.z +
+		j;
+
+
+	float discriminant = pow(B, 2) - (4 * A * C);
+
+	if (discriminant <= 0){
+		Hit* hit1 = new Hit();
+		Hit* hit2 = new Hit();
+		hit1->entering = true;
+		hit1->t = -10000000000.0f; // infinity
+		hit1->what = this;
+		hit2->entering = false;
+		hit2->t = 10000000000.0f; // infinity
+		hit2->what = this;
+		hit1->next = hit2;
+		hit2->next = 0;
+		return hit1;
+	}
+	else{
+		float t0 = (-B - sqrt(discriminant)) / (2 * A);
+
+		if (t0 < 0){
+			Hit* hit1 = new Hit();
+			Hit* hit2 = new Hit();
+			hit1->entering = true;
+			hit1->t = -10000000000.0f; // infinity
+			hit1->what = this;
+			hit2->entering = false;
+			hit2->t = 10000000000.0f; // infinity
+			hit2->what = this;
+			hit1->next = hit2;
+			hit2->next = 0;
+			return hit1;
+		}
+		else{
+			Vertex position1 = ray.position + t0 * ray.direction;
+			Vector normal1;
+			normal1.x = a * position1.x + b * position1.y + c * position1.z + d;
+			normal1.x = b * position1.x + e * position1.y + f * position1.z + g;
+			normal1.x = c * position1.x + f * position1.y + h * position1.z + i;
+	
+			if (normal1.dot(ray.direction) > 0.0)
+			{
+				normal1.negate();
+			}
+			normal1.normalise();
+			
+			Hit* hit1 = new Hit();
+			Hit* hit2 = new Hit();
+			hit1->entering = true;
+			hit1->t = t0;
+			hit1->position = position1;
+			hit1->normal = normal1;
+			hit1->what = this;
+
+
+			float t1 = (-B + sqrt(discriminant)) / (2 * A);
+			Vertex position2 = ray.position + t1 * ray.direction;
+			Vector normal2;
+			normal2.x = a * position2.x + b * position2.y + c * position2.z + d;
+			normal2.x = b * position2.x + e * position2.y + f * position2.z + g;
+			normal2.x = c * position2.x + f * position2.y + h * position2.z + i;
+			if (normal2.dot(ray.direction) > 0.0)
+			{
+				normal2.negate();
+			}
+			normal2.normalise();
+
+			hit2->entering = false;
+			hit2->t = t1;
+			hit2->position = position2;
+			hit2->normal = normal2;
+			hit2->what = this;
+
+			hit1->next = hit2;
+			hit2->next = 0;
+			return hit1;
+		}
+	}
 }
 
 
 void Quadratic::apply_transform(Transform& trans)
 {
-
+	transform = trans.transpose() * transform * trans;
 }

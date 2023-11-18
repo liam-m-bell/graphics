@@ -20,10 +20,11 @@
 
 #pragma once
 
-#include "object.h"
+#include "../Core/object.h"
 
 class Quadratic : public Object {
 public:
+  Transform transform;  
   Quadratic(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j);
   Hit *intersection(Ray ray);
   void apply_transform(Transform& trans);
