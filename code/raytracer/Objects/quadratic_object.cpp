@@ -21,27 +21,24 @@
 
 using namespace std;
 
-Quadratic::Quadratic(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j)
+Quadratic::Quadratic(float p_a, float p_b, float p_c, float p_d, float p_e, float p_f, float p_g, float p_h, float p_i, float p_j)
 {
 	next = (Object *)0;
 
-	transform = Transform(a, b, c, d, b, e, f, g, c, f, h, i, d, g, i, j);
-
+	a = p_a;
+    b = p_b;
+    c = p_c;
+    d = p_d;
+    e = p_e;
+    f = p_f;
+    g = p_g;
+    h = p_h;
+    i = p_i;
+    j = p_j;
 }
 
 Hit *Quadratic::intersection(Ray ray)
 {
-	float a = transform.matrix[0][0];
-    float b = transform.matrix[0][1];
-    float c = transform.matrix[0][2];
-    float d = transform.matrix[0][3];
-    float e = transform.matrix[1][1];
-    float f = transform.matrix[1][2];
-    float g = transform.matrix[1][3];
-    float h = transform.matrix[2][2];
-    float i = transform.matrix[2][3];
-    float j = transform.matrix[3][3];
-
 	Vector P = ray.position;
 	Vector D = ray.direction;
 
@@ -52,15 +49,15 @@ Hit *Quadratic::intersection(Ray ray)
 		2 * f * D.y * D.z +
 		g * pow(D.z, 2);
 
-	float B = 2 * a * P.x * D.x +
-		2 * b * (P.x * D.y + D.x * P.y) +
+	float B = 2 * (a * P.x * D.x +
+		b * (P.x * D.y + D.x * P.y) +
 		c * (P.x * D.z + D.x * P.z) +
 		d * D.x +
 		e * P.y * D.y +
 		f * (P.y * D.z + D.y * P.z) +
 		g * D.y +
 		h * P.z + D.z +
-		i * D.z;
+		i * D.z);
 
 	float C = a * pow(P.x, 2) +
 		2 * b * P.x * P.y +
@@ -109,8 +106,8 @@ Hit *Quadratic::intersection(Ray ray)
 			Vertex position1 = ray.position + t0 * ray.direction;
 			Vector normal1;
 			normal1.x = a * position1.x + b * position1.y + c * position1.z + d;
-			normal1.x = b * position1.x + e * position1.y + f * position1.z + g;
-			normal1.x = c * position1.x + f * position1.y + h * position1.z + i;
+			normal1.y = b * position1.x + e * position1.y + f * position1.z + g;
+			normal1.z = c * position1.x + f * position1.y + h * position1.z + i;
 	
 			if (normal1.dot(ray.direction) > 0.0)
 			{
@@ -126,13 +123,12 @@ Hit *Quadratic::intersection(Ray ray)
 			hit1->normal = normal1;
 			hit1->what = this;
 
-
 			float t1 = (-B + sqrt(discriminant)) / (2 * A);
 			Vertex position2 = ray.position + t1 * ray.direction;
 			Vector normal2;
 			normal2.x = a * position2.x + b * position2.y + c * position2.z + d;
-			normal2.x = b * position2.x + e * position2.y + f * position2.z + g;
-			normal2.x = c * position2.x + f * position2.y + h * position2.z + i;
+			normal2.y = b * position2.x + e * position2.y + f * position2.z + g;
+			normal2.z = c * position2.x + f * position2.y + h * position2.z + i;
 			if (normal2.dot(ray.direction) > 0.0)
 			{
 				normal2.negate();
@@ -155,5 +151,5 @@ Hit *Quadratic::intersection(Ray ray)
 
 void Quadratic::apply_transform(Transform& trans)
 {
-	transform = trans.transpose() * transform * trans;
+	//transform = trans.transpose() * transform * trans;
 }

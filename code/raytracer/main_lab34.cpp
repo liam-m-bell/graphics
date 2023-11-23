@@ -32,6 +32,7 @@
 #include "Objects/polymesh_object.h"
 #include "Objects/sphere_object.h"
 #include "Objects/plane_object.h"
+#include "Objects/quadratic_object.h"
 
 // classes that contain our lights, all derived from Light
 #include "Lights/directional_light.h"
@@ -83,12 +84,7 @@ void build_scene(Scene& scene)
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
 	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
-	scene.add_object(sp1);
-	
-	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
-	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
-	scene.add_object(sp2);
-
+	//scene.add_object(sp1);
 	
 
 	Plane *p0 = new Plane(0, 0, 1, -20);
@@ -96,14 +92,14 @@ void build_scene(Scene& scene)
 	p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
 	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
 	p0->set_material(p0mat);
-	scene.add_object(p0);
+	//scene.add_object(p0);
 
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
 	CompoundMaterial *sp3mat = new CompoundMaterial(2);
 	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
 	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.1f));
 	sp3->set_material(sp3mat);
-	scene.add_object(sp3);
+	//scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
 	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0, 0, 0.1), 10));
@@ -117,6 +113,15 @@ void build_scene(Scene& scene)
 
 	Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l3);
+
+	// Quadratics
+	Quadratic *quad = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, 1);
+	quad->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
+	scene.add_object(quad);
+
+	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
+	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
+	scene.add_object(sp2);
 }
 
 
@@ -136,8 +141,8 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 6.0f, -8.0f);
-	Vector lookat(0.0f, -0.2f, 1.0f);
+	Vertex position(-2.0f, 2.0f, -8.0f);
+	Vector lookat(0.2f, -0.2f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);
 	
