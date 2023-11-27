@@ -72,9 +72,9 @@ void build_scene(Scene& scene)
 	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
 	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	Transform * transform2 = new Transform(
-		2.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 2.0f, 1.0f,
 		0.0f, 2.0f, 0.0f, 0.2f,
-		0.0f, 0.0f, 2.0f, -4.0f,
+		2.0f, 0.0f, 0.0f, -4.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	//pm2->apply_transform(*teapotTransform);

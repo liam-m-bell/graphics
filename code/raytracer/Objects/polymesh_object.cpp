@@ -58,6 +58,13 @@ void PolyMesh::calculateVertexNormals(){
 }
 
 void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[], string material){
+    Vector normal = getTriangleNormal({ P[t[0]], P[t[1]], P[t[2]] });
+    if (isnan(normal.x)){
+        return;
+    }
+
+    triangleNormals.push_back(normal);
+
     triangle.push_back({ P[t[0]], P[t[1]], P[t[2]] });
 
     for (int i = 0; i < 3; i++){
@@ -75,9 +82,6 @@ void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[], string material){
         }
     }
 
-    // Add face normal
-    Vector normal = getTriangleNormal(triangle[triangle_count]);
-    triangleNormals.push_back(normal);
 
     // Add material
     triangleMaterials.push_back(material);
@@ -308,7 +312,7 @@ Hit* PolyMesh::intersection(Ray ray)
 
         if (intersectsTriangle(P, i, normal)){
             // Intersects
-            if (best_hit ){
+            if (best_hit){
                 delete best_hit;
             }
 
