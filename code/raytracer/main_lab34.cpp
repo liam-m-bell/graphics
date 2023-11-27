@@ -51,35 +51,35 @@ using namespace std;
 // you will find it useful during development/debugging to create multiple functions that fill out the scene.
 void build_scene(Scene& scene)
 {
-	Transform * teapotTransform = new Transform(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+	// Transform * teapotTransform = new Transform(
+	// 	1.0f, 0.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 1.0f, 0.0f,
+	// 	0.0f, 1.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 
-	PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
-	Transform * transform = new Transform(
-		0.12f, 0.0f, 0.0f, -3.0f,
-		0.0f, 0.12f, 0.0f, 0.2f,
-		0.0f, 0.0f, 0.12f, -6.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+	// PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false, false, &scene);
+	// Transform * transform = new Transform(
+	// 	0.12f, 0.0f, 0.0f, -3.0f,
+	// 	0.0f, 0.12f, 0.0f, 0.2f,
+	// 	0.0f, 0.0f, 0.12f, -6.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 
-	pm->apply_transform(*teapotTransform);
-	pm->apply_transform(*transform);
-	pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	// pm->apply_transform(*teapotTransform);
+	// pm->apply_transform(*transform);
+	// pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
 	//scene.add_object(pm);
 
-	PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
+	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
+	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	Transform * transform2 = new Transform(
-		0.12f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.12f, 0.0f, 0.2f,
-		0.0f, 0.0f, 0.12f, -11.5f,
+		2.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 2.0f, 0.0f, 0.2f,
+		0.0f, 0.0f, 2.0f, -4.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
-	pm2->apply_transform(*teapotTransform);
+	//pm2->apply_transform(*teapotTransform);
 	pm2->apply_transform(*transform2);
-	pm2->set_material(new Phong(Colour(0.1, 0.1, 0.1), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
-	//scene.add_object(pm2);
+	scene.add_object(pm2);
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
 	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
@@ -103,7 +103,7 @@ void build_scene(Scene& scene)
 	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
 	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.1f));
 	sp3->set_material(sp3mat);
-	scene.add_object(sp3);
+	//scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
 	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0, 0, 0.1), 10));
