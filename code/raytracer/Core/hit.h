@@ -43,6 +43,7 @@ public:
 	Vertex    position;	    // the position of intersection
 	Vector    normal;		// the normal at the point of intersection
 	TexCoords coordinates;  // the texture coordinates at the point of intersection
+	string material;
 
 	void* operator new(size_t size);
 	void operator delete(void* p);

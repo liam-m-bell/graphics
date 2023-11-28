@@ -11,10 +11,10 @@
                 "-o",
                 "${workspaceFolder}/main_lab34",
                 "./Objects/sphere_object.cpp",
+                "./Core/hit.cpp",
                 "./Core/scene.cpp",
                 "./Core/framebuffer.cpp",
                 "./Cameras/full_camera.cpp",
-                "./Core/hit.cpp",
                 "./Materials/falsecolour_material.cpp",
                 "./Objects/polymesh_object.cpp",
                 "./Objects/plane_object.cpp",
@@ -23,7 +23,8 @@
                 "./Lights/point_light.cpp",
                 "./linedrawer.cpp",
                 "./Materials/global_material.cpp",
-                "./Materials/compound_material.cpp"
+                "./Materials/compound_material.cpp",
+                "./Materials/mesh_material.cpp"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
