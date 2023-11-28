@@ -85,17 +85,13 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	if (isnan(result.r)){
 		result = Colour();
 	}
-	result.scale(kT);
-	result.scale(refractWeight);
+	result = refractWeight * kT * result ;
 
 	Colour reflectResult = reflection(view, hit, recurse);
 	if (isnan(reflectResult.r)){
 		reflectResult = Colour();
 	}
-	reflectResult.scale(kR);
-	reflectResult.scale(reflectWeight);
-
-	result.add(reflectResult);
+	result = result + reflectResult * (kT * refractWeight + reflectWeight);
 
 	return result;
 }

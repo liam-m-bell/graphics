@@ -20,6 +20,7 @@
                 "./Objects/plane_object.cpp",
                 "./Materials/phong_material.cpp",
                 "./Lights/directional_light.cpp",
+                "./Lights/point_light.cpp",
                 "./linedrawer.cpp",
                 "./Materials/global_material.cpp",
                 "./Materials/compound_material.cpp"
