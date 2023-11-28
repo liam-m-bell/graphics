@@ -21,33 +21,45 @@
 
 using namespace std;
 
-Quadratic::Quadratic(float p_a, float p_b, float p_c, float p_d, float p_e, float p_f, float p_g, float p_h, float p_i, float p_j)
-{
+Quadratic::Quadratic(float p_a, float p_b, float p_c, float p_d, 
+	float p_e, float p_f, float p_g, float p_h, float p_i, float p_j) {
 	next = (Object *)0;
 
-	a = p_a;
-    b = p_b;
-    c = p_c;
-    d = p_d;
-    e = p_e;
-    f = p_f;
-    g = p_g;
-    h = p_h;
-    i = p_i;
-    j = p_j;
+	transform = Transform(p_a, p_b, p_c, p_d, p_b, p_e, 
+		p_f, p_g, p_c, p_f, p_h, p_i, p_d, p_g, p_i, p_j);
 }
 
 Hit *Quadratic::intersection(Ray ray)
 {
-	Vector P = ray.position;
+	float a = transform.matrix[0][0];
+    float b = transform.matrix[0][1];
+    float c = transform.matrix[0][2];
+    float d = transform.matrix[0][3];
+    float e = transform.matrix[1][1];
+    float f = transform.matrix[1][2];
+    float g = transform.matrix[1][3];
+    float h = transform.matrix[2][2];
+    float i = transform.matrix[2][3];
+    float j = transform.matrix[3][3];
+
+	Vertex P = ray.position;
 	Vector D = ray.direction;
+	// Vertex D = Vertex(ray.direction.x, ray.direction.y, ray.direction.z);
+
+	// Vertex _P, _D;
+	// transform.apply(P, _P);
+	// transform.apply(D, _D);
+
+	// float A = D.dot(_D);
+	// float B = P.dot(_D) + D.dot(_P);
+	// float C = P.dot(_P);
 
 	float A = a * pow(D.x, 2) + 
 		2 * b * D.x * D.y +
 		2 * c * D.x * D.z +
 		e * pow(D.y, 2) +
 		2 * f * D.y * D.z +
-		g * pow(D.z, 2);
+		h * pow(D.z, 2);
 
 	float B = 2 * (a * P.x * D.x +
 		b * (P.x * D.y + D.x * P.y) +
@@ -74,33 +86,13 @@ Hit *Quadratic::intersection(Ray ray)
 	float discriminant = pow(B, 2) - (4 * A * C);
 
 	if (discriminant <= 0){
-		Hit* hit1 = new Hit();
-		Hit* hit2 = new Hit();
-		hit1->entering = true;
-		hit1->t = -10000000000.0f; // infinity
-		hit1->what = this;
-		hit2->entering = false;
-		hit2->t = 10000000000.0f; // infinity
-		hit2->what = this;
-		hit1->next = hit2;
-		hit2->next = 0;
-		return hit1;
+		return 0;
 	}
 	else{
 		float t0 = (-B - sqrt(discriminant)) / (2 * A);
 
 		if (t0 < 0){
-			Hit* hit1 = new Hit();
-			Hit* hit2 = new Hit();
-			hit1->entering = true;
-			hit1->t = -10000000000.0f; // infinity
-			hit1->what = this;
-			hit2->entering = false;
-			hit2->t = 10000000000.0f; // infinity
-			hit2->what = this;
-			hit1->next = hit2;
-			hit2->next = 0;
-			return hit1;
+			return 0;
 		}
 		else{
 			Vertex position1 = ray.position + t0 * ray.direction;
@@ -151,5 +143,5 @@ Hit *Quadratic::intersection(Ray ray)
 
 void Quadratic::apply_transform(Transform& trans)
 {
-	//transform = trans.transpose() * transform * trans;
+	transform = trans.transpose() * transform * trans;
 }
