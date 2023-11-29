@@ -73,24 +73,30 @@ void build_scene(Scene& scene)
 	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
 	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	Transform * transform2 = new Transform(
-		0.0f, 0.0f, 2.0f, 1.0f,
+		-0.7071068f, 0.0f, -0.7071068f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.7071068f, 0.0f, -0.7071068f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	Transform * scaleT = new Transform(
+		2.0f, 0.0f, 0.0f, 1.0f,
 		0.0f, 2.0f, 0.0f, 0.2f,
-		2.0f, 0.0f, 0.0f, -4.0f,
+		0.0f, 0.0f, 2.0f, -2.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	//pm2->apply_transform(*teapotTransform);
 	pm2->apply_transform(*transform2);
+	pm2->apply_transform(*scaleT);
+
 	scene.add_object(pm2);
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
 	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	scene.add_object(sp1);
 	
-	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
+	Sphere *sp2 = new Sphere(Vertex(-2.0f,1.0f,-2.5f),1.0f);
 	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
 	scene.add_object(sp2);
-
-	
 
 	Plane *p0 = new Plane(0, 0, 1, -20);
 	CompoundMaterial *p0mat = new CompoundMaterial(2);
@@ -127,7 +133,7 @@ void build_scene(Scene& scene)
 	p5->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
 	//scene.add_object(p5);
 
-	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
+	Light *l1 = new DirectionalLight(Vector(1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l1);
 
 	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
@@ -136,7 +142,7 @@ void build_scene(Scene& scene)
 	//Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
 	// scene.add_light(l3);
 
-	Light *l0 = new PointLight(Vertex(-2.0f, 2.0f, -20.0f), Colour(0.1, 0.1, 0.1));
+	Light *l0 = new PointLight(Vertex(2.0f, 2.0f, -20.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l0);
 
 }
@@ -145,8 +151,8 @@ void build_scene(Scene& scene)
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 1024;
-	int height = 1024;
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 	
