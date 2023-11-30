@@ -54,4 +54,7 @@ public:
   void add_object(Object *obj);
   void add_light(Light *light);
 
+  // Photon Mapping
+  void photonMapping();
+  Colour calculateIndirectIllumination(Vector point);
 };

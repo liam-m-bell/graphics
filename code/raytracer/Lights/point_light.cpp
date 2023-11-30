@@ -43,3 +43,25 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 {
 	level = intensity;
 }
+
+
+// void PointLight::emitPhotons(){
+// 	// n = 0;
+// 	// for (int i = 0; i < 1000; i++){
+// 	// 	Vector direction = Vector(2, 2, 2);
+// 	// 	do {
+// 	// 		direction.x = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
+// 	// 		direction.y = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
+// 	// 		direction.z = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
+// 	// 	} while (direction.len_sqr() > 1.0f);
+
+// 	// 	Ray photon;
+// 	// 	photon.position = position;
+// 	// 	photon.direciton = direction;
+
+// 	// 	n++;
+// 	// }
+
+// 	//TODO: Scale poweer of stored phtons with 1/n
+// }
+

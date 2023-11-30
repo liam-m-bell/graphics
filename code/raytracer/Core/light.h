@@ -50,4 +50,7 @@ public:
 
 	// You will need additional light methods to support Photon-mapping.
 
+	virtual void emitPhotons(){
+		
+	}
 };

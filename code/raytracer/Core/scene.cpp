@@ -111,81 +111,84 @@ Hit* Scene::select_first(Hit* list)
 
 void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 {
-  Object *objects = object_list;
-  Light *lights = light_list;
-	
-  // a default colour if we hit nothing.
-  colour.r = 0.0f;
-  colour.g = 0.0f;
-  colour.b = 0.0f;
-  colour.a = 0.0f;
-  depth = 0.0f;
+	Object *objects = object_list;
+	Light *lights = light_list;
+		
+	// a default colour if we hit nothing.
+	colour.r = 0.0f;
+	colour.g = 0.0f;
+	colour.b = 0.0f;
+	colour.a = 0.0f;
+	depth = 0.0f;
 
-  // first step, find the closest primitive
-  Hit *best_hit = this->trace(ray);
+	// first step, find the closest primitive
+	Hit *best_hit = this->trace(ray);
 
-  // if we found a primitive then compute the colour we should see
-  if (best_hit != 0)
-  {
-	  depth = best_hit->t;
-	  colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
-
-	  // next, compute the light contribution for each light in the scene.
-	  Light* light = light_list;
-	  while (light != (Light*)0)
-	  {
-		  Vector viewer;
-		  Vector ldir;
-
-		  viewer = -best_hit->position;
-		  viewer.normalise();
-
-		  bool lit;
-		  lit = light->get_direction(best_hit->position, ldir);
-
-		  if (ldir.dot(best_hit->normal) > 0)
-		  {
-			  lit = false;//light is facing wrong way.
-		  }
-
-		  // Put the shadow check here, if lit==true and in shadow, set lit=false
-		  if (lit)
-		  {
-			  float shadowRayStartOffset =0.0001f;
-		  	  float shadowLimit = 1000000000.0f;
-			  Ray shadow_ray;
-
-			  shadow_ray.direction = -ldir;
-			  // Adjust starting point of shadow ray to start just outside the object to stop self intersection
-			  shadow_ray.position = best_hit->position + (shadowRayStartOffset * shadow_ray.direction);
-
-			  if (this->shadowtrace(shadow_ray, shadowLimit))
-			  {
-				  lit = false; //there's a shadow so no lighting, if realistically close
-			  }
-		  }
-
-		  if (lit)
-		  {
-			  Colour intensity;
-			  
-			  light->get_intensity(best_hit->position, intensity);
-			  
-			  colour = colour + intensity * best_hit->what->material->compute_per_light(viewer, *best_hit, ldir); // this is the per light local contrib e.g. diffuse, specular
-
-		  }
-
-		  light = light->next;
-	  }
-
-	  delete best_hit;
-  } else
+	// if we found a primitive then compute the colour we should see
+	if (best_hit != 0)
 	{
-		colour.r = 0.0f;
-		colour.g = 0.0f;
-		colour.b = 0.0f;
-		colour.a = 1.0f;
-	}
+		depth = best_hit->t;
+		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
+		
+		Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
+        colour = colour + indirectIllumination;
+		
+		// next, compute the light contribution for each light in the scene.
+		Light* light = light_list;
+		while (light != (Light*)0)
+		{
+			Vector viewer;
+			Vector ldir;
+
+			viewer = -best_hit->position;
+			viewer.normalise();
+
+			bool lit;
+			lit = light->get_direction(best_hit->position, ldir);
+
+			if (ldir.dot(best_hit->normal) > 0)
+			{
+				lit = false;//light is facing wrong way.
+			}
+
+			// Put the shadow check here, if lit==true and in shadow, set lit=false
+			if (lit)
+			{
+				float shadowRayStartOffset =0.0001f;
+				float shadowLimit = 1000000000.0f;
+				Ray shadow_ray;
+
+				shadow_ray.direction = -ldir;
+				// Adjust starting point of shadow ray to start just outside the object to stop self intersection
+				shadow_ray.position = best_hit->position + (shadowRayStartOffset * shadow_ray.direction);
+
+				if (this->shadowtrace(shadow_ray, shadowLimit))
+				{
+					lit = false; //there's a shadow so no lighting, if realistically close
+				}
+			}
+
+			if (lit)
+			{
+				Colour intensity;
+				
+				light->get_intensity(best_hit->position, intensity);
+				
+				colour = colour + intensity * best_hit->what->material->compute_per_light(viewer, *best_hit, ldir); // this is the per light local contrib e.g. diffuse, specular
+
+			}
+
+			light = light->next;
+		}
+
+		delete best_hit;
+	} else
+		{
+			colour.r = 0.0f;
+			colour.g = 0.0f;
+			colour.b = 0.0f;
+			colour.a = 1.0f;
+		}
 }
 
 void Scene::add_object(Object *obj)
@@ -198,5 +201,13 @@ void Scene::add_light(Light *light)
 {
   light->next = this->light_list;
   this->light_list = light;
+}
+
+void Scene::photonMapping(){
+
+}
+
+Colour Scene::calculateIndirectIllumination(Vector point){
+
 }
 
