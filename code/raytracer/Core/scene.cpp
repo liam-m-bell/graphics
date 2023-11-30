@@ -204,7 +204,8 @@ void Scene::add_light(Light *light)
 }
 
 void Scene::photonMapping(){
-
+	photonMap = new PhotonMap();
+	photonMap->buildMap(1000);
 }
 
 Colour Scene::calculateIndirectIllumination(Vector point){

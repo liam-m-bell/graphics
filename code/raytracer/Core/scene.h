@@ -24,6 +24,7 @@
 #include "light.h"
 #include "hit.h"
 #include "environment.h"
+#include "../PhotonMapping/photon_map.h"
 
 
 // Scene is a class that is used to build a scene database of objects
@@ -55,6 +56,7 @@ public:
   void add_light(Light *light);
 
   // Photon Mapping
+  PhotonMap *photonMap;
   void photonMapping();
   Colour calculateIndirectIllumination(Vector point);
 };

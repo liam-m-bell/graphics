@@ -1,16 +1,12 @@
 
+#include "photon_map.h"
 
-#include <vector>
+PhotonMap::PhotonMap()
+{
 
-#include "photon_mapper.h"
-
-
-PhotonMapper::PhotonMapper(Environment& env){
-    environment = env;
 }
 
-
-void PhotonMapper::buildMap(int n){
+void PhotonMap::buildMap(int n){
     typedef KD::Core<3, Photon> CORE;
 
     Photon min(Vector(0,0,0), Vector(1,1,1), Colour(0,0,0), normal);
@@ -18,7 +14,7 @@ void PhotonMapper::buildMap(int n){
     KD::Tree<CORE> kdtree(min, max);
 }
 
-vector<Photon> PhotonMapper::query(Vector point, float radius){
+std::vector<Photon> PhotonMap::query(Vector point, float radius){
 
 }
 
