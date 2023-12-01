@@ -204,7 +204,7 @@ void Scene::add_light(Light *light)
   this->light_list = light;
 }
 
-void Scene::photontrace(Photon photon, int recurse, Colour energy){
+void Scene::photontrace(Photon photon, int recurse){
 	if (recurse < 0) {
         return;
     }
@@ -223,9 +223,9 @@ void Scene::photontrace(Photon photon, int recurse, Colour energy){
         // Update the photon's direction based on material properties
         hit->what->material->receivePhoton(photon, *hit, recurse);
 
-		energy * hit->what->material->attenuation;
+		photon.energy * hit->what->material->attenuation;
 
-        photontrace(photon, recurse - 1, energy);
+        photontrace(photon, recurse - 1);
 
         delete hit;
     }
@@ -239,9 +239,8 @@ void Scene::photonMapping(int n){
 		while (light != (Light*)0)
 		{
 			vector<Photon> photonRays = light->getPhotons(10);
-			Colour energy = Colour(1, 1, 1);
 			for (Photon photon : photonRays){
-				photontrace(photon, 5, energy);
+				photontrace(photon, 5);
 				// Do something
 			}
 

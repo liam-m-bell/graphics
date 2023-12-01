@@ -59,6 +59,6 @@ public:
   vector<Photon> photons;
   PhotonMap *photonMap;
   void photonMapping(int n);
-  void photontrace(Photon ray, int recurse, Colour energy);
+  void photontrace(Photon ray, int recurse);
   Colour calculateIndirectIllumination(Vector point);
 };

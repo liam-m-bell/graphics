@@ -45,8 +45,8 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 }
 
 
-// void PointLight::getPhotons(int n){
-// 	n = 0;
+// std::vector<Photon> PointLight::getPhotons(int n){
+// 	int total = 0;
 // 	for (int i = 0; i < n; i++){
 // 		Vector direction = Vector(2, 2, 2);
 // 		do {
@@ -55,11 +55,12 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 // 			direction.z = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
 // 		} while (direction.len_sqr() > 1.0f);
 
-// 		Ray photon;
+// 		Photon photon;
 // 		photon.position = position;
-// 		photon.direciton = direction;
+// 		photon.direction = direction;
+// 		photon.energy = Colour(1, 1, 1);
 
-// 		n++;
+// 		total++;
 // 	}
 
 	

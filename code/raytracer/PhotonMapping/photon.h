@@ -10,14 +10,14 @@ struct Photon
 {
   	Vector position;
 	Vector direction;
-	Colour intensity;
-	enum photonType type;
+	Colour energy;
+	enum photonType type = normal;
 
   	Photon() {}
-  	Photon(Vector p_position, Vector p_direction, Colour p_intensity, enum photonType p_type){
+  	Photon(Vector p_position, Vector p_direction, Colour p_energy, enum photonType p_type){
 		position = p_position;
 		direction = p_direction;
-		intensity = p_intensity;
+		energy = p_energy;
 		type = p_type;
 	}
 
