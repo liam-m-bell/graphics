@@ -20,9 +20,13 @@
 
 #pragma once
 
+#include <vector>
+
 #include "vertex.h"
 #include "vector.h"
 #include "colour.h"
+#include "ray.h"
+#include "../PhotonMapping/photon.h"
 
 
 class Light {
@@ -50,7 +54,8 @@ public:
 
 	// You will need additional light methods to support Photon-mapping.
 
-	virtual void emitPhotons(){
-		
+	virtual std::vector<Ray> getPhotons(){
+		std::vector<Ray> rays;
+		return rays;
 	}
 };

@@ -45,7 +45,7 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 }
 
 
-// void PointLight::emitPhotons(){
+// void PointLight::getPhotons(){
 // 	// n = 0;
 // 	// for (int i = 0; i < 1000; i++){
 // 	// 	Vector direction = Vector(2, 2, 2);

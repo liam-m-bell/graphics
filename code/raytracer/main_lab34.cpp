@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 	build_scene(scene);
 
 	// Photon Mapping
-	scene.photonMapping();
+	scene.photonMapping(10);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);
