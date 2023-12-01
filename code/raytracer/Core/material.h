@@ -23,6 +23,7 @@
 #include "colour.h"
 #include "ray.h"
 #include "hit.h"
+#include "../PhotonMapping/photon.h"
 
 
 class Material {
@@ -51,7 +52,7 @@ public:
 	// You will need additional material methods to support Photon-mapping.
 	float attenuation;
 
-	virtual Ray receivePhoton(Ray &viewer, Hit &hit, int recurse){
-		
+	virtual void receivePhoton(Photon photon, Hit &hit, int recurse){
+
 	}
 };

@@ -54,8 +54,8 @@ public:
 
 	// You will need additional light methods to support Photon-mapping.
 
-	virtual std::vector<Ray> getPhotons(){
-		std::vector<Ray> rays;
-		return rays;
+	virtual std::vector<Photon> getPhotons(int n){
+		std::vector<Photon> photons;
+		return photons;
 	}
 };

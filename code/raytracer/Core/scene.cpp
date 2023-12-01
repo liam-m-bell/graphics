@@ -204,29 +204,28 @@ void Scene::add_light(Light *light)
   this->light_list = light;
 }
 
-void Scene::photontrace(Ray ray, int recurse, Colour energy){
+void Scene::photontrace(Photon photon, int recurse, Colour energy){
 	if (recurse < 0) {
         return;
     }
 
     // Perform intersection test to find the nearest surface
+	Ray ray;
+	ray.position = Vertex(photon.position.x, photon.position.y, photon.position.z);
+	ray.direction = photon.direction;
     Hit* hit = trace(ray);
 
     if (hit) {
         // Store photon information at the intersection point
-        Photon photon;
-        photon.position = hit->position;
-        photon.direction = ray.direction;
-        photon.intensity = energy;
 
         photons.push_back(photon);
 
         // Update the photon's direction based on material properties
-        hit->what->material->receivePhoton(ray, *hit, recurse);
+        hit->what->material->receivePhoton(photon, *hit, recurse);
 
 		energy * hit->what->material->attenuation;
 
-        photontrace(ray, recurse - 1, energy);
+        photontrace(photon, recurse - 1, energy);
 
         delete hit;
     }
@@ -239,10 +238,10 @@ void Scene::photonMapping(int n){
 		Light* light = light_list;
 		while (light != (Light*)0)
 		{
-			vector<Ray> photonRays = light->getPhotons();
+			vector<Photon> photonRays = light->getPhotons(10);
 			Colour energy = Colour(1, 1, 1);
-			for (Ray ray : photonRays){
-				photontrace(ray, 5, energy);
+			for (Photon photon : photonRays){
+				photontrace(photon, 5, energy);
 				// Do something
 			}
 
