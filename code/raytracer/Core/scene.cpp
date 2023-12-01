@@ -220,11 +220,8 @@ void Scene::photontrace(Photon photon, int recurse){
 
         photons.push_back(photon);
 
-        // Update the photon's direction based on material properties
-        hit->what->material->receivePhoton(photon, *hit, recurse);
-
-		photon.energy * hit->what->material->attenuation;
-
+        // Update the photon direction based on material properties
+        hit->what->material->receivePhoton(&photon, *hit);
         photontrace(photon, recurse - 1);
 
         delete hit;

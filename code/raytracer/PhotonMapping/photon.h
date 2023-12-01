@@ -12,6 +12,7 @@ struct Photon
 	Vector direction;
 	Colour energy;
 	enum photonType type = normal;
+	bool absorbed;
 
   	Photon() {}
   	Photon(Vector p_position, Vector p_direction, Colour p_energy, enum photonType p_type){
@@ -19,6 +20,7 @@ struct Photon
 		direction = p_direction;
 		energy = p_energy;
 		type = p_type;
+		absorbed = false;
 	}
 
 	float operator [] (int i) const {

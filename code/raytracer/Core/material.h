@@ -52,7 +52,35 @@ public:
 	// You will need additional material methods to support Photon-mapping.
 	float attenuation;
 
-	virtual void receivePhoton(Photon photon, Hit &hit, int recurse){
+	// True if absorbed
+	void receivePhoton(Photon *photon, Hit &hit){
+		// Russian roulette probabilities
+		float reflectProbability = 0.8f;
+		float transmitProbability = 0.1f;
 
+		float randomValue = (float)(rand()) / (float)(RAND_MAX);
+		
+		if (randomValue < reflectProbability) {
+			reflectPhoton(photon, hit);
+		} else if (randomValue < reflectProbability + transmitProbability) {
+			transmitPhoton(photon, hit);
+		} else {
+			absorbPhoton(photon, hit);
+		}
+	}
+
+	virtual void reflectPhoton(Photon *photon, Hit &hit)
+	{
+
+	}
+
+	virtual void transmitPhoton(Photon *photon, Hit &hit)
+	{
+
+	}
+
+	virtual void absorbPhoton(Photon *photon, Hit &hit)
+	{
+		photon->absorbed = true;
 	}
 };

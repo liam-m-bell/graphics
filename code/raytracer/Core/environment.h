@@ -22,6 +22,7 @@
 
 #include "ray.h"
 #include "colour.h"
+#include "../PhotonMapping/photon_map.h"
 
 class Environment {
 public:
@@ -42,4 +43,13 @@ public:
 		return false;
 	}
 
+	virtual void photonMapping(int n){
+
+	}
+  	virtual void photontrace(Photon ray, int recurse){
+
+	}
+  	virtual Colour calculateIndirectIllumination(Vector point){
+		return Colour();
+	}
 };
