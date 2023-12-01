@@ -238,8 +238,8 @@ void Scene::photonMapping(int n){
 		Light* light = light_list;
 		while (light != (Light*)0)
 		{
-			vector<Photon> photonRays = light->getPhotons(10);
-			for (Photon photon : photonRays){
+			vector<Photon> lightPhotons = light->getPhotons(1000);
+			for (Photon photon : lightPhotons){
 				photontrace(photon, 5);
 				// Do something
 			}
