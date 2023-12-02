@@ -17,7 +17,7 @@ public:
 
     // void buildMap(int n);
     void buildMap(std::vector<Photon> photons);
-    std::vector<Photon> query(Vector point, float radius);
+    std::vector<Photon> query(Vector point, int n, float radius);
 };
 
 

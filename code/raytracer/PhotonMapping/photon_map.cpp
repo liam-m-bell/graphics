@@ -9,8 +9,10 @@ void PhotonMap::buildMap(std::vector<Photon> photons){
 }
 
 
-std::vector<Photon> PhotonMap::query(Vector point, float radius){
-    std::vector<Photon> nearbyPhotons;
+std::vector<Photon> PhotonMap::query(Vector point, int n, float radius){
+    Photon p;
+    p.position = point;
+    std::vector<Photon> nearbyPhotons = kdtree.find(p, n, (double)radius);
     return nearbyPhotons;
 }
 

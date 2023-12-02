@@ -22,6 +22,8 @@
 #include "../Core/material.h"
 #include "../Core/environment.h"
 
+#include "phong_material.h"
+
 class GlobalMaterial: public Material {
 public:
 	Colour reflectWeight;
@@ -29,15 +31,29 @@ public:
 	float ior;
 	Environment* environment;
 
-	GlobalMaterial(Environment* p_env, Colour p_reflect_weight, Colour p_refract_weight, float ior);
+	Phong *phongMat;
+
+	GlobalMaterial(Environment* p_env, Colour p_reflect_weight, Colour p_refract_weight, float ior, Phong *p_phongMat);
 
 	Colour compute_once(Ray& viewer, Hit& hit, int recurse);
 
 	Colour compute_per_light(Vector& viewer, Hit& hit, Vector& ldir);
 
+	void receivePhoton(Photon *photon, Hit &hit);
+
 private:
 	Colour reflection(Vector& view, Hit& hit, int recurse);
 
 	Colour refraction(Vector& view, Hit& hit, int recurse);
+
+	void reflectPhoton(Photon *photon, Hit &hit);
+
+	Vector diffuseReflection(Vector normal);
+
+	Vector specularReflection(Vector incident, Vector normal);
+
+	void transmitPhoton(Photon *photon, Hit &hit);
+
+	void absorbPhoton(Photon *photon, Hit &hit);
 };
 

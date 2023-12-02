@@ -92,23 +92,20 @@ void build_scene(Scene& scene)
 
 	
 
-	Plane *p0 = new Plane(0, 0, 1, -20);
-	CompoundMaterial *p0mat = new CompoundMaterial(2);
-	p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
-	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
-	p0->set_material(p0mat);
-	//scene.add_object(p0);
+	// Plane *p0 = new Plane(0, 0, 1, -20);
+	// CompoundMaterial *p0mat = new CompoundMaterial(2);
+	// p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
+	// //p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
+	// p0->set_material(p0mat);
+	// //scene.add_object(p0);
 
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
-	CompoundMaterial *sp3mat = new CompoundMaterial(2);
-	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
-	//sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.0f));
-	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.5, 0.5, 0.5), 1.1f));
-	sp3->set_material(sp3mat);
-	//scene.add_object(sp3);
+	Phong *sp3phong = new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10);
+	sp3->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.5, 0.5, 0.5), 1.1f, sp3phong));
+	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.1, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
 	scene.add_object(p1);
 
 	Plane *p2 = new Plane(0, 1, 0, -10);
@@ -127,8 +124,8 @@ void build_scene(Scene& scene)
 	p5->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
 	//scene.add_object(p5);
 
-	// Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
-	// scene.add_light(l1);
+	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
+	scene.add_light(l1);
 
 	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	// scene.add_light(l2);
@@ -147,8 +144,8 @@ int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 1024;
-	int height = 1024;
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 

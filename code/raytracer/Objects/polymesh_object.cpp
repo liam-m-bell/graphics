@@ -400,11 +400,8 @@ void PolyMesh::loadMaterial(string file, Environment* env){
 
         if (lineHeader == "newmtl"){
             if (materialCount > 0){
-                CompoundMaterial *compoundMat = new CompoundMaterial(2);
-                compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
-                compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
-                
-                materials[faceMaterial.name] = compoundMat;
+                Phong *phongMat = new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns);
+                materials[faceMaterial.name] = new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni, phongMat);
             }
             faceMaterial = OBJMaterial();
             string name;
@@ -450,11 +447,8 @@ void PolyMesh::loadMaterial(string file, Environment* env){
     }
 
     if (materialCount > 0){
-        CompoundMaterial *compoundMat = new CompoundMaterial(2);
-        compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
-        compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
-        
-        materials[faceMaterial.name] = compoundMat;
+        Phong *phongMat = new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns);
+        materials[faceMaterial.name] = new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni, phongMat);
     }
 
     matFile.close();

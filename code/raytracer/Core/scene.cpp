@@ -131,8 +131,8 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		depth = best_hit->t;
 		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
 		
-		Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
-        colour = colour + indirectIllumination;
+		//Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
+        //colour = colour + indirectIllumination;
 		
 		// next, compute the light contribution for each light in the scene.
 		Light* light = light_list;
@@ -253,7 +253,7 @@ void Scene::photonMapping(int n){
 Colour Scene::calculateIndirectIllumination(Vector point){
 	Colour result;
 	float radius = 1;
-	vector<Photon> nearbyPhotons = photonMap->query(point, radius);
+	vector<Photon> nearbyPhotons = photonMap->query(point, 10, radius);
 
 	return result;
 }

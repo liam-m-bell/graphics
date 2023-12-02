@@ -60,7 +60,7 @@ std::vector<Photon> PointLight::getPhotons(int n){
 		photon.position = position;
 		direction.normalise();
 		photon.direction = direction;
-		photon.energy = Colour(1, 1, 1);
+		photon.energy = intensity * (1/(float)n);
 
 		photons.push_back(photon);
 	}
