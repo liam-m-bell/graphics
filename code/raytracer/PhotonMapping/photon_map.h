@@ -9,15 +9,18 @@
 
 class PhotonMap {
 public:
-    KD::Tree<KD::Core<3, Photon>> kdtree;   
+
+    KD::Tree<KD::Core<3, Photon>> kdtree;
+
+    std::vector<Photon> photons;  
 
     Photon min;
     Photon max;
-	PhotonMap(): min(Vector(0,0,0), Vector(1,1,1), Colour(0,0,0), normal), max(Vector(100,100,100), Vector(2,2,2), Colour(1,1,1), normal), kdtree(min, max) {}
+	PhotonMap(): min(Photon(Vector(-50,-50,-50), Vector(0,0,0), Colour(0,0,0), normal)), max(Photon(Vector(50,50,50), Vector(0,0,0), Colour(0,0,0), normal)), kdtree(min, max) {}
 
-    // void buildMap(int n);
-    void buildMap(std::vector<Photon> photons);
-    std::vector<Photon> query(Vector point, int n, float radius);
+    void addPhoton(Photon photon);
+    void buildMap();
+    std::vector<Photon> query(Vector point, float radius);
 };
 
 

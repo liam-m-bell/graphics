@@ -51,19 +51,7 @@ public:
 
 	// You will need additional material methods to support Photon-mapping.
 
-	virtual void receivePhoton(Photon *photon, Hit &hit){
-
-	}
-
-	virtual void reflectPhoton(Photon *photon, Hit &hit){
-
-	}
-
-	virtual void transmitPhoton(Photon *photon, Hit &hit){
-
-	}
-
-	virtual void absorbPhoton(Photon *photon, Hit &hit){
+	virtual bool receivePhoton(Photon *photon, Hit &hit){
 
 	}
 };

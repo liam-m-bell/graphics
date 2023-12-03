@@ -16,6 +16,8 @@
 * produced it.
 */
 
+#include <random>
+
 #include "point_light.h"
 
 PointLight::PointLight()
@@ -46,15 +48,18 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 
 
 std::vector<Photon> PointLight::getPhotons(int n){
+	std::default_random_engine generator;
+ 	std::uniform_real_distribution<float> distribution(-1.0f,1.0f);
+
 	std::vector<Photon> photons;
 
 	for (int i = 0; i < n; i++){
-		Vector direction = Vector(2, 2, 2);
+		Vector direction;
 		do {
-			direction.x = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
-			direction.y = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
-			direction.z = (2.0f * (float)(rand()) / (float)(RAND_MAX)) - 1.0f;
-		} while (direction.len_sqr() > 1.0f);
+			direction.x = distribution(generator);
+			direction.y = distribution(generator);
+			direction.z = distribution(generator);
+		} while (direction.len_sqr() > 1.0f || direction.z < 0.0f  || direction.x > 0.2f || direction.x < -0.5f || direction.y > 0.2f || direction.y < -0.5f );
 
 		Photon photon;
 		photon.position = position;

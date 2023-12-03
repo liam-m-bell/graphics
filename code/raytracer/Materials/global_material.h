@@ -39,14 +39,14 @@ public:
 
 	Colour compute_per_light(Vector& viewer, Hit& hit, Vector& ldir);
 
-	void receivePhoton(Photon *photon, Hit &hit);
+	bool receivePhoton(Photon *photon, Hit &hit);
 
 private:
 	Colour reflection(Vector& view, Hit& hit, int recurse);
 
 	Colour refraction(Vector& view, Hit& hit, int recurse);
 
-	void reflectPhoton(Photon *photon, Hit &hit);
+	bool reflectPhoton(Photon *photon, Hit &hit);
 
 	Vector diffuseReflection(Vector normal);
 
@@ -54,6 +54,6 @@ private:
 
 	void transmitPhoton(Photon *photon, Hit &hit);
 
-	void absorbPhoton(Photon *photon, Hit &hit);
+	void absorbPhoton(Photon *photon);
 };
 

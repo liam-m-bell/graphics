@@ -73,9 +73,9 @@ void build_scene(Scene& scene)
 	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
 	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	Transform * transform2 = new Transform(
-		0.0f, 0.0f, 2.0f, 1.0f,
+		0.0f, 0.0f, 2.0f, -2.0f,
 		0.0f, 2.0f, 0.0f, 0.2f,
-		2.0f, 0.0f, 0.0f, -4.0f,
+		2.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	//pm2->apply_transform(*teapotTransform);
@@ -83,29 +83,30 @@ void build_scene(Scene& scene)
 	scene.add_object(pm2);
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
-	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
+	sp1->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
+		(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10))));
 	scene.add_object(sp1);
 	
 	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
-	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
+	sp2->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
+		(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10))));
 	scene.add_object(sp2);
 
 	
 
-	// Plane *p0 = new Plane(0, 0, 1, -20);
-	// CompoundMaterial *p0mat = new CompoundMaterial(2);
-	// p0mat->include_material(new Phong(Colour(0, 0, 0.01), Colour(0, 0, 0.3), Colour(0, 0, 0.1), 10));
-	// //p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
-	// p0->set_material(p0mat);
-	// //scene.add_object(p0);
+	Plane *p0 = new Plane(0, 0, 1, -20);
+	p0->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.03, 0, 0), Colour(0.5, 0.1, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+	//scene.add_object(p0);
 
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
-	Phong *sp3phong = new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10);
-	sp3->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.5, 0.5, 0.5), 1.1f, sp3phong));
+	sp3->set_material(new GlobalMaterial(&scene, Colour(0.5, 0.5, 0.5), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.02, 0.02, 0.02), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.1, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	p1->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0, 0, 0.03), Colour(0.1, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(p1);
 
 	Plane *p2 = new Plane(0, 1, 0, -10);
@@ -125,7 +126,7 @@ void build_scene(Scene& scene)
 	//scene.add_object(p5);
 
 	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
-	scene.add_light(l1);
+	//scene.add_light(l1);
 
 	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	// scene.add_light(l2);
@@ -133,7 +134,7 @@ void build_scene(Scene& scene)
 	//Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
 	// scene.add_light(l3);
 
-	Light *l0 = new PointLight(Vertex(-2.0f, 2.0f, -20.0f), Colour(0.1, 0.1, 0.1));
+	Light *l0 = new PointLight(Vertex(1.0f, 2.0f, -8.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l0);
 
 }
@@ -151,10 +152,13 @@ int main(int argc, char *argv[])
 
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(2.0f, 5.0f, -10.0f);
-	Vector lookat(0.0f, -0.2f, 1.0f);
+	Vertex position(0.0f, 3.0f, -7.0f);
+	Vector lookat(0.0f, 0.0f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
-	Camera* camera = new FullCamera(0.75f, position, lookat, up);
+	// Vertex position(0.0f, 30.0f, -8.0f);
+	// Vector lookat(0.0f, -1.0f, 0.0f);
+	// Vector up(0.0f, 0.0f, 1.0f);
+	Camera* camera = new FullCamera(0.8f, position, lookat, up);
 	
 	// Create a scene
 	Scene scene;
@@ -163,7 +167,7 @@ int main(int argc, char *argv[])
 	build_scene(scene);
 
 	// Photon Mapping
-	scene.photonMapping(10);
+	scene.photonMapping(50000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

@@ -131,8 +131,10 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		depth = best_hit->t;
 		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
 		
-		//Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
-        //colour = colour + indirectIllumination;
+		if (best_hit->normal.len_sqr() > 0){
+			Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
+        	colour = colour + indirectIllumination;
+		}
 		
 		// next, compute the light contribution for each light in the scene.
 		Light* light = light_list;
@@ -205,55 +207,64 @@ void Scene::add_light(Light *light)
 }
 
 void Scene::photontrace(Photon photon, int recurse){
-	if (recurse < 0) {
-        return;
-    }
-
     // Perform intersection test to find the nearest surface
 	Ray ray;
 	ray.position = Vertex(photon.position.x, photon.position.y, photon.position.z);
 	ray.direction = photon.direction;
     Hit* hit = trace(ray);
 
-    if (hit) {
+    if (hit && hit->normal.len_sqr() > 0) {
         // Store photon information at the intersection point
-
-        photons.push_back(photon);
-
+		photon.position = hit->position;
+        
         // Update the photon direction based on material properties
-        hit->what->material->receivePhoton(&photon, *hit);
-        photontrace(photon, recurse - 1);
+		Photon newPhoton = Photon(photon.position, photon.direction, photon.energy, photon.type);
+        bool storePhoton = hit->what->material->receivePhoton(&newPhoton, *hit);
 
-        delete hit;
+		// if (storePhoton){
+		// 	photonMap->addPhoton(photon);
+		// }
+		photonMap->addPhoton(photon);
+
+		if (!newPhoton.absorbed && recurse > 0){
+			photontrace(newPhoton, recurse - 1);
+		}
     }
+
+	delete hit;
 }
 
 void Scene::photonMapping(int n){
-	vector<Photon> photons;
-	//Trace Photons
-	for (int i = 0; i < n; i++){
-		Light* light = light_list;
-		while (light != (Light*)0)
-		{
-			vector<Photon> lightPhotons = light->getPhotons(1000);
-			for (Photon photon : lightPhotons){
-				photontrace(photon, 5);
-				// Do something
-			}
+	photonMap = new PhotonMap();
 
-			light = light->next;
+	//Trace Photons
+	Light* light = light_list;
+	while (light != (Light*)0)
+	{
+		vector<Photon> lightPhotons = light->getPhotons(n);
+		int f = lightPhotons.size();
+		for (int i = 0; i < lightPhotons.size(); i++){
+			photontrace(lightPhotons[i], 5);
+			if (i%(n / 20) == 0){
+				std::cout << "\nLight:" <<(100 * i/n) << "%";
+			}
 		}
+
+		light = light->next;
 	}
 
 	// Build Photon Map
-	photonMap = new PhotonMap();
-	photonMap->buildMap(photons);
+	photonMap->buildMap();
 }
 
 Colour Scene::calculateIndirectIllumination(Vector point){
 	Colour result;
-	float radius = 1;
-	vector<Photon> nearbyPhotons = photonMap->query(point, 10, radius);
+	float radius = 0.02;
+	vector<Photon> nearbyPhotons = photonMap->query(point, radius);
+
+	if (nearbyPhotons.size() > 0){
+		result = Colour(0.3f, 0.3f, 0.3f);
+	}
 
 	return result;
 }

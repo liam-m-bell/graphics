@@ -99,10 +99,14 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 Colour GlobalMaterial::compute_once(Ray& viewer, Hit& hit, int recurse)
 {
 	Colour result = phongMat->compute_once(viewer, hit,  recurse);
-	//Colour result = Colour(0, 0, 0);
 	
 	if (recurse != 0){
-		result += refraction(viewer.direction, hit, recurse);
+		if (refractWeight.r > 0){
+			result += refraction(viewer.direction, hit, recurse);
+		}
+		else if (reflectWeight.r > 0){
+			result += reflection(viewer.direction, hit, recurse);
+		}
 	}
 
 	return result;
@@ -111,32 +115,29 @@ Colour GlobalMaterial::compute_once(Ray& viewer, Hit& hit, int recurse)
 Colour GlobalMaterial::compute_per_light(Vector& viewer, Hit& hit, Vector& ldir)
 {
 	Colour result = phongMat->compute_per_light(viewer, hit, ldir);
-	// Colour result;
-
-	// result.r=0.0f;
-	// result.g=0.0f;
-	// result.b=0.0f;
 
 	return result;
 }
 
-void GlobalMaterial::receivePhoton(Photon *photon, Hit &hit){
+bool GlobalMaterial::receivePhoton(Photon *photon, Hit &hit){
 	// Russian roulette
-	float reflectProbability = 0.5f;
+	float reflectProbability = 0.1f;
 	float transmitProbability = 0.0f;
 
 	float randomValue = (float)(rand()) / (float)(RAND_MAX);
 	
 	if (randomValue < reflectProbability) {
-		reflectPhoton(photon, hit);
+		return reflectPhoton(photon, hit);
 	} else if (randomValue < reflectProbability + transmitProbability) {
 		transmitPhoton(photon, hit);
+		return false;
 	} else {
-		absorbPhoton(photon, hit);
+		absorbPhoton(photon);
+		return true;
 	}
 }
 
-void GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
+bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 	// Russian roulette
 	Colour diffuseEnergies = photon->energy;
 	diffuseEnergies.scale(phongMat->kDiffuse);
@@ -149,12 +150,15 @@ void GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 	float randomValue = (float)(rand()) / (float)(RAND_MAX);
 	
 	if (randomValue < diffuseProbability) {
-		diffuseReflection(hit.normal);
+		photon->direction = diffuseReflection(hit.normal);
+		return true;
 
 	} else if (randomValue < diffuseProbability + specularProbability) {
-		//specularReflection
+		photon->direction = specularReflection(photon->direction, hit.normal);
+		return false;
 	} else {
-		absorbPhoton(photon, hit);
+		absorbPhoton(photon);
+		return true;
 	}
 }
 
@@ -197,6 +201,6 @@ void GlobalMaterial::transmitPhoton(Photon *photon, Hit &hit){
 	//TODO
 }
 
-void GlobalMaterial::absorbPhoton(Photon *photon, Hit &hit){
+void GlobalMaterial::absorbPhoton(Photon *photon){
 	photon->absorbed = true;
 }
