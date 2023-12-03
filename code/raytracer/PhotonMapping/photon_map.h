@@ -20,7 +20,7 @@ public:
 
     void addPhoton(Photon photon);
     void buildMap();
-    std::vector<Photon> query(Vector point, float radius);
+    std::vector<Photon> query(Vector point, int n);
 };
 
 

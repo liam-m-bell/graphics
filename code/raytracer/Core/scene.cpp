@@ -131,7 +131,7 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		depth = best_hit->t;
 		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
 		
-		if (best_hit->normal.len_sqr() > 0){
+		if ((recurse < 4) && best_hit->normal.len_sqr() > 0){
 			Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
         	colour = colour + indirectIllumination;
 		}
@@ -221,10 +221,12 @@ void Scene::photontrace(Photon photon, int recurse){
 		Photon newPhoton = Photon(photon.position, photon.direction, photon.energy, photon.type);
         bool storePhoton = hit->what->material->receivePhoton(&newPhoton, *hit);
 
-		// if (storePhoton){
-		// 	photonMap->addPhoton(photon);
-		// }
-		photonMap->addPhoton(photon);
+		if (storePhoton){
+			photonMap->addPhoton(photon);
+			if (photon.type == caustic){
+				causticMap->addPhoton(photon);
+			}
+		}
 
 		if (!newPhoton.absorbed && recurse > 0){
 			photontrace(newPhoton, recurse - 1);
@@ -236,6 +238,7 @@ void Scene::photontrace(Photon photon, int recurse){
 
 void Scene::photonMapping(int n){
 	photonMap = new PhotonMap();
+	causticMap = new PhotonMap();
 
 	//Trace Photons
 	Light* light = light_list;
@@ -253,19 +256,36 @@ void Scene::photonMapping(int n){
 		light = light->next;
 	}
 
-	// Build Photon Map
+	// Build Photon Maps
 	photonMap->buildMap();
+	causticMap->buildMap();
 }
 
 Colour Scene::calculateIndirectIllumination(Vector point){
 	Colour result;
-	float radius = 0.02;
-	vector<Photon> nearbyPhotons = photonMap->query(point, radius);
+	float n = 20;
+	vector<Photon> nearbyPhotons = photonMap->query(point, n);
 
-	if (nearbyPhotons.size() > 0){
-		result = Colour(0.3f, 0.3f, 0.3f);
+	float radius = 0.0f;
+	for (Photon photon : nearbyPhotons){
+		if ((photon.position - point).len_sqr() > pow(radius, 2)){
+			radius = (photon.position - point).length();
+		}
+	}
+	
+	Colour flux = Colour();
+	for (Photon photon : nearbyPhotons){
+		flux = flux + photon.energy;
 	}
 
+	result = flux * (1 / (M_PI * pow(radius,2)));
+
 	return result;
+
+	// if (nearbyPhotons.size() > 0){
+	// 	result = Colour(0.3f, 0.3f, 0.3f);
+	// }
+
+	
 }
 

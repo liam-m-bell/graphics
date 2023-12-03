@@ -57,6 +57,7 @@ public:
 
   // Photon Mapping
   PhotonMap *photonMap;
+  PhotonMap *causticMap;
   void photonMapping(int n);
   void photontrace(Photon ray, int recurse);
   Colour calculateIndirectIllumination(Vector point);

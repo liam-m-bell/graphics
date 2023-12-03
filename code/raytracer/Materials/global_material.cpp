@@ -155,6 +155,7 @@ bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 
 	} else if (randomValue < diffuseProbability + specularProbability) {
 		photon->direction = specularReflection(photon->direction, hit.normal);
+		photon->type = caustic;
 		return false;
 	} else {
 		absorbPhoton(photon);
