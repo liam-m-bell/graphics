@@ -56,6 +56,7 @@ public:
   void add_light(Light *light);
 
   // Photon Mapping
+  bool usingPhotonMap = false;
   PhotonMap *photonMap;
   PhotonMap *causticMap;
   void photonMapping(int n);

@@ -139,6 +139,46 @@ void build_scene(Scene& scene)
 
 }
 
+void build_box(Scene& scene){
+	Material *white = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 10)));
+
+	Material *red = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.0, 0.0), Colour(0.5, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10)));
+
+	Material *green = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.0, 0.01, 0.0), Colour(0.0, 0.5, 0.0), Colour(0.1, 0.1, 0.1), 10)));
+
+
+	Plane *floor = new Plane(0, 1, 0, 0);
+	floor->set_material(white);
+	scene.add_object(floor);
+
+	Plane *back = new Plane(0, 0, -1, 5);
+	back->set_material(white);
+	scene.add_object(back);
+
+	Plane *left = new Plane(1, 0, 0, 5);
+	left->set_material(red);
+	scene.add_object(left);
+
+	Plane *right = new Plane(-1, 0, 0, 5);
+	right->set_material(green);
+	scene.add_object(right);
+
+	Plane *ceiling = new Plane(0, -1, 0, 10);
+	ceiling->set_material(white);
+	scene.add_object(ceiling);
+
+	Sphere *sphere = new Sphere(Vertex(1.0f,1.0f,0.0f),1.0f);
+	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
+		(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10))));
+	scene.add_object(sphere);
+
+	Light *light = new PointLight(Vertex(0.0f, 6.0f, -6.0f), Colour(0.1, 0.1, 0.1));
+	scene.add_light(light);
+}
+
 
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
@@ -151,23 +191,21 @@ int main(int argc, char *argv[])
 	FrameBuffer* fb = new FrameBuffer(width, height);
 
 	// Declare a camera
-	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(0.0f, 3.0f, -7.0f);
+	Vertex position(0.0f, 5.0f, -5.0f);
 	Vector lookat(0.0f, 0.0f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
-	// Vertex position(0.0f, 30.0f, -8.0f);
-	// Vector lookat(0.0f, -1.0f, 0.0f);
-	// Vector up(0.0f, 0.0f, 1.0f);
-	Camera* camera = new FullCamera(0.8f, position, lookat, up);
+
+	Camera* camera = new FullCamera(0.4f, position, lookat, up);
 	
 	// Create a scene
 	Scene scene;
 	
 	// Setup the scene
-	build_scene(scene);
+	//build_scene(scene);
+	build_box(scene);
 
 	// Photon Mapping
-	scene.photonMapping(50000);
+	//scene.photonMapping(100000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

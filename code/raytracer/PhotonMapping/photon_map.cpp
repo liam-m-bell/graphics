@@ -21,7 +21,7 @@ void PhotonMap::buildMap(){
 std::vector<Photon> PhotonMap::query(Vector point, int n){
     Photon p;
     p.position = point;
-    std::vector<Photon> nearbyPhotons = kdtree.within(p, n);
+    std::vector<Photon> nearbyPhotons = kdtree.within(p, 0.01);
     return nearbyPhotons;
 }
 

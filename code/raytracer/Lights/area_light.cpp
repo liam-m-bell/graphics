@@ -18,22 +18,24 @@
 
 #include <random>
 
-#include "point_light.h"
+#include "area_light.h"
 
-PointLight::PointLight()
+AreaLight::PointLight()
 {
 	Light();
 }
 
-PointLight::PointLight(Vertex pos, Colour col)
+AreaLight::PointLight(Vertex pos, Vector dir, float size, Colour col)
 {
 	Light();
 
 	position = pos;
+	normal = dir;
+	size = size;
 	intensity = col;
 }
 
-bool PointLight::get_direction(Vertex &surface, Vector &dir)
+bool AreaLight::get_direction(Vertex &surface, Vector &dir)
 {
 	dir = (surface - position);
 	dir.normalise();
@@ -41,17 +43,52 @@ bool PointLight::get_direction(Vertex &surface, Vector &dir)
 	return true;
 }
 
-void PointLight::get_intensity(Vertex &surface, Colour &level)
+void AreaLight::get_intensity(Vertex &surface, Colour &level)
 {
 	level = intensity;
 }
 
 
-std::vector<Photon> PointLight::getPhotons(int n){
+std::vector<Photon> AreaLight::getPhotons(int n){
+	std::vector<Photon> photons;
+	
 	std::default_random_engine generator;
+	std::uniform_real_distribution<float> squareDistribution(-0.5f * size, 0.5f * size);
  	std::uniform_real_distribution<float> distribution(-1.0f,1.0f);
 
-	std::vector<Photon> photons;
+	
+
+
+
+	float u = distribution(generator);
+	float v = distribution(generator);
+
+	float theta = acos(sqrt(u));
+	float phi = 2 * M_PI * v;
+
+	float x = sin(theta) * cos(phi);
+	float y = sin(theta) * sin(phi);
+	float z = cos(theta);
+
+	Vector reflection = Vector(x, y, z);
+
+	x = x - (reflection.dot(normal) * normal.x);
+	y = y - (reflection.dot(normal) * normal.y);
+	z = z - (reflection.dot(normal) * normal.z);
+
+	reflection = Vector(x, y, z);
+	reflection.normalise();
+
+	return reflection;
+
+
+
+
+
+
+
+
+
 
 	for (int i = 0; i < n; i++){
 		Vector direction;
@@ -59,7 +96,7 @@ std::vector<Photon> PointLight::getPhotons(int n){
 			direction.x = distribution(generator);
 			direction.y = distribution(generator);
 			direction.z = distribution(generator);
-		} while (direction.len_sqr() > 1.0f || direction.z < 0.0f  || direction.x > 0.5f || direction.x < -0.5f || direction.y > 0.5f || direction.y < -0.5f );
+		} while (direction.len_sqr() > 1.0f || direction.z < 0.0f  || direction.x > 0.2f || direction.x < -0.5f || direction.y > 0.2f || direction.y < -0.5f );
 
 		Photon photon;
 		photon.position = position;
