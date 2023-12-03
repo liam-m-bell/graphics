@@ -64,7 +64,7 @@ std::vector<Photon> PointLight::getPhotons(int n){
 			direction.x = distribution(generator);
 			direction.y = distribution(generator);
 			direction.z = distribution(generator);
-		} while (direction.len_sqr() > 1.0f || direction.z < 0.0f  || direction.x > 0.5f || direction.x < -0.5f || direction.y > 0.5f || direction.y < -0.5f );
+		} while (direction.len_sqr() > 1.0f || direction.y >= 0);
 
 		Photon photon;
 		photon.position = position;

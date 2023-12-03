@@ -170,17 +170,46 @@ void build_box(Scene& scene){
 	ceiling->set_material(white);
 	scene.add_object(ceiling);
 
-	Sphere *sphere = new Sphere(Vertex(1.0f,1.0f,0.0f),1.0f);
+	Sphere *sphere = new Sphere(Vertex(2.0f,0.5f, 3.0f),0.5f);
 	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
-	scene.add_object(sphere);
+		(new Phong(Colour(0, 0.01, 0.01), Colour(0.0, 0.1, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(sphere);	
 
-	Sphere *reflectiveSphere = new Sphere(Vertex(-1.0, 2.0f, 2.0f),2.0f);
+	Sphere *reflectiveSphere = new Sphere(Vertex(-1.5, 2.0f, 2.5f),2.0f);
 	reflectiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.5, 0.5, 0.5), Colour(0.0, 0.0, 0.0), 1.0f, 
 		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.02, 0.02, 0.02), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(reflectiveSphere);
 
-	Light *light = new PointLight(Vertex(0.0f, 9.0f, 0.0f), Colour(0.1, 0.1, 0.1));
+	Sphere *refractiveSphere = new Sphere(Vertex(1.0f,1.0f,1.0f),1.0f);
+	refractiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(1.0, 1.0, 1.0), 1.1f, 
+		(new Phong(Colour(0, 0.0, 0.001), Colour(0.0, 0.0, 0.01), Colour(0.05, 0.05, 0.05), 10))));
+	//scene.add_object(refractiveSphere);
+
+	PolyMesh *cube = new PolyMesh((char *)"teapot-low.obj", true, false, &scene);
+	cube->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.9, 0.9, 0.9), 1.1f, 
+		(new Phong(Colour(0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+	Transform *objectTransform = new Transform(
+		1.0f, 0.0f, 0.0f, 2.0f,
+		0.0f, 1.0f, 0.0f, 1.001f,
+		0.0f, 0.0f, 1.0f, 0.3f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	Transform * teapotTransform = new Transform(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	Transform * scaleTransform = new Transform(
+		0.15f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.15f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.15f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	cube->apply_transform(*scaleTransform);
+	cube->apply_transform(*teapotTransform);
+	cube->apply_transform(*objectTransform);
+	scene.add_object(cube);
+
+	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(light);
 }
 
@@ -190,8 +219,8 @@ int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 2048;
-	int height = 2048;
+	int width = 1024;
+	int height = 1024;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 
@@ -210,7 +239,7 @@ int main(int argc, char *argv[])
 	build_box(scene);
 
 	// Photon Mapping
-	//scene.photonMapping(100000);
+	//scene.photonMapping(10000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

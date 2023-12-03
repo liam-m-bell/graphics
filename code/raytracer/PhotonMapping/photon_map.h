@@ -16,7 +16,7 @@ public:
 
     Photon min;
     Photon max;
-	PhotonMap(): min(Photon(Vector(-50,-50,-50), Vector(0,0,0), Colour(0,0,0), normal)), max(Photon(Vector(50,50,50), Vector(0,0,0), Colour(0,0,0), normal)), kdtree(min, max) {}
+	PhotonMap(): min(Photon(Vector(-20,-20,-20), Vector(0,0,0), Colour(0,0,0), direct)), max(Photon(Vector(20,20,20), Vector(0,0,0), Colour(0,0,0), direct)), kdtree(min, max) {}
 
     void addPhoton(Photon photon);
     void buildMap();

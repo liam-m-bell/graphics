@@ -62,11 +62,13 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	float cosThetaI = normal.dot(I);
 	float cosThetaT = sqrt(1 - (1/pow(relativeIor, 2)) * (1 - pow(cosThetaI, 2)));
 
+	// Fresnel term
 	float rPar = ((relativeIor * cosThetaI) - cosThetaT) / ((relativeIor * cosThetaI) + cosThetaT);
 	float rPer = (cosThetaI - (relativeIor * cosThetaT)) / (cosThetaI + (relativeIor * cosThetaT));
 
 	Colour kR = Colour(1, 1, 1) * 0.5f * (pow(rPar, 2) + pow(rPer, 2));
 	Colour kT  = Colour(1, 1, 1) + (kR * Colour(-1, -1, -1));
+ 
 
 	// Calculate refraction
 	Colour result = Colour(0, 0, 0);
@@ -90,7 +92,7 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	if (isnan(reflectResult.r)){
 		reflectResult = Colour();
 	}
-	result = result + reflectResult * (kT * refractWeight + reflectWeight);
+	result = result + (reflectResult * kR);
 
 	return result;
 }
@@ -104,7 +106,7 @@ Colour GlobalMaterial::compute_once(Ray& viewer, Hit& hit, int recurse)
 		if (refractWeight.r > 0){
 			result += refraction(viewer.direction, hit, recurse);
 		}
-		else if (reflectWeight.r > 0){
+		if (reflectWeight.r > 0){
 			result += reflection(viewer.direction, hit, recurse);
 		}
 	}

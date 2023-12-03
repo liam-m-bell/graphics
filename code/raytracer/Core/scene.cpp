@@ -285,7 +285,12 @@ Colour Scene::calculateIndirectIllumination(Vector point){
 	// result = flux * (1 / (M_PI * pow(radius,2)));
 
 	
-	vector<Photon> nearbyPhotons = photonMap->query(point, 10);
+	// vector<Photon> nearbyPhotons = photonMap->query(point, 10);
+	// if (nearbyPhotons.size() > 0){
+	// 	result = Colour(0.3f, 0.3f, 0.3f);
+	// }
+
+	vector<Photon> nearbyPhotons = causticMap->query(point, 10);
 	if (nearbyPhotons.size() > 0){
 		result = Colour(0.3f, 0.3f, 0.3f);
 	}

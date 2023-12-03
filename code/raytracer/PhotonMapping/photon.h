@@ -4,14 +4,14 @@
 #include "../Core/vector.h"
 #include "../Core/colour.h"
 
-enum photonType { normal, shadow, caustic };
+enum photonType { direct, indirect, shadow, caustic };
 
 struct Photon
 {
   	Vector position;
 	Vector direction;
 	Colour energy;
-	enum photonType type = normal;
+	enum photonType type = direct;
 	bool absorbed;
 
   	Photon() {}
