@@ -171,11 +171,16 @@ void build_box(Scene& scene){
 	scene.add_object(ceiling);
 
 	Sphere *sphere = new Sphere(Vertex(1.0f,1.0f,0.0f),1.0f);
-	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
-		(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10))));
+	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(sphere);
 
-	Light *light = new PointLight(Vertex(0.0f, 6.0f, -6.0f), Colour(0.1, 0.1, 0.1));
+	Sphere *reflectiveSphere = new Sphere(Vertex(-1.0, 2.0f, 2.0f),2.0f);
+	reflectiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.5, 0.5, 0.5), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.02, 0.02, 0.02), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(reflectiveSphere);
+
+	Light *light = new PointLight(Vertex(0.0f, 9.0f, 0.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(light);
 }
 
@@ -185,8 +190,8 @@ int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 512;
-	int height = 512;
+	int width = 2048;
+	int height = 2048;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 

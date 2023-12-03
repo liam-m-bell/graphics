@@ -35,10 +35,10 @@ bool Scene::shadowtrace(Ray ray, float limit)
 
 		if (hit != 0)
 		{
-		  if ((hit->t > 0.00000001f) &&( hit->t < limit))
+		  	if ((hit->t > 0.00000001f) &&( hit->t < limit))
 		    {
-			  delete hit;
-		      return true;
+			  	delete hit;
+		      	return true;
 		    }
 		  delete hit;
 		}
@@ -158,12 +158,13 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 			if (lit)
 			{
 				float shadowRayStartOffset = 0.0001f;
-				float shadowLimit = 1000000000.0f;
 				Ray shadow_ray;
 
 				shadow_ray.direction = -ldir;
 				// Adjust starting point of shadow ray to start just outside the object to stop self intersection
 				shadow_ray.position = best_hit->position + (shadowRayStartOffset * shadow_ray.direction);
+
+				float shadowLimit = light->getDistance(best_hit->position);
 
 				if (this->shadowtrace(shadow_ray, shadowLimit))
 				{

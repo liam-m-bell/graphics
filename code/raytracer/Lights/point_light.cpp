@@ -47,6 +47,11 @@ void PointLight::get_intensity(Vertex &surface, Colour &level)
 }
 
 
+float PointLight::getDistance(Vertex point){
+	return (point - position).length();
+}
+
+
 std::vector<Photon> PointLight::getPhotons(int n){
 	std::default_random_engine generator;
  	std::uniform_real_distribution<float> distribution(-1.0f,1.0f);

@@ -48,6 +48,10 @@ void AreaLight::get_intensity(Vertex &surface, Colour &level)
 	level = intensity;
 }
 
+float AreaLight::getDistance(Vertex point){
+	return 1000000000.0f;
+}
+
 
 std::vector<Photon> AreaLight::getPhotons(int n){
 	std::vector<Photon> photons;
