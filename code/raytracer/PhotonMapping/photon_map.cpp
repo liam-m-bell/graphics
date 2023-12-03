@@ -11,7 +11,7 @@ void PhotonMap::buildMap(){
     for (int i = 0; i < photons.size(); i++){
         kdtree.insert(photons[i]);
         
-        if (i%(photons.size() / 20) == 0){
+        if ((photons.size() > 20) && i%(photons.size() / 20) == 0){
 			std::cout << "\nBuilding Photon Map:" <<(100 * i/photons.size()) << "%";
 		}
     }
@@ -21,7 +21,7 @@ void PhotonMap::buildMap(){
 std::vector<Photon> PhotonMap::query(Vector point, int n){
     Photon p;
     p.position = point;
-    std::vector<Photon> nearbyPhotons = kdtree.within(p, 0.01);
+    std::vector<Photon> nearbyPhotons = kdtree.nearest(p, n);
     return nearbyPhotons;
 }
 

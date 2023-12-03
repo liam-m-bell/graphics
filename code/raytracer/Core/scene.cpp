@@ -132,7 +132,7 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
 		
 		if (usingPhotonMap && best_hit->normal.len_sqr() > 0){
-			Colour indirectIllumination = calculateIndirectIllumination(best_hit->position);
+			Colour indirectIllumination = calculateIndirectIllumination(best_hit);
         	colour = colour + indirectIllumination;
 		}
 		
@@ -223,10 +223,17 @@ void Scene::photontrace(Photon photon, int recurse){
         bool storePhoton = hit->what->material->receivePhoton(&newPhoton, *hit);
 
 		if (storePhoton){
-			photonMap->addPhoton(photon);
 			if (photon.type == caustic){
 				causticMap->addPhoton(photon);
 			}
+			else if (recurse == photonTraceDepth){
+				photon.type = direct;
+			}
+			else{
+				photon.type = indirect;
+			}
+
+			photonMap->addPhoton(photon);
 		}
 
 		if (!newPhoton.absorbed && recurse > 0){
@@ -249,7 +256,7 @@ void Scene::photonMapping(int n){
 		vector<Photon> lightPhotons = light->getPhotons(n);
 		int f = lightPhotons.size();
 		for (int i = 0; i < lightPhotons.size(); i++){
-			photontrace(lightPhotons[i], 5);
+			photontrace(lightPhotons[i], photonTraceDepth);
 			if (i%(n / 20) == 0){
 				std::cout << "\nLight:" <<(100 * i/n) << "%";
 			}
@@ -263,13 +270,13 @@ void Scene::photonMapping(int n){
 	causticMap->buildMap();
 }
 
-Colour Scene::calculateIndirectIllumination(Vector point){
+Colour Scene::calculateIndirectIllumination(Hit *hit){
 	Colour result;
 
+	float n = 10;
+	// vector<Photon> nearbyPhotons = photonMap->query(hit->position, n);
 
-	// float n = 20;
-	// vector<Photon> nearbyPhotons = photonMap->query(point, n);
-
+	// Vector point = hit->position;
 	// float radius = 0.0f;
 	// for (Photon photon : nearbyPhotons){
 	// 	if ((photon.position - point).len_sqr() > pow(radius, 2)){
@@ -277,23 +284,25 @@ Colour Scene::calculateIndirectIllumination(Vector point){
 	// 	}
 	// }
 	
+	// Vector view = -point;
 	// Colour flux = Colour();
 	// for (Photon photon : nearbyPhotons){
-	// 	flux = flux + photon.energy;
+	// 	flux = flux + photon.energy * hit->what->material->compute_per_light(view, *hit, photon.direction);
 	// }
 
 	// result = flux * (1 / (M_PI * pow(radius,2)));
 
-	
-	// vector<Photon> nearbyPhotons = photonMap->query(point, 10);
+	Photon p;
+    p.position = hit->position;
+    std::vector<Photon> nearbyPhotons = photonMap->kdtree.find(p, 1, 0.02);
+	if (nearbyPhotons.size() > 0){
+		result = Colour(0.3f, 0.3f, 0.3f);	
+	}
+
+	// vector<Photon> nearbyPhotons = causticMap->query(point, 10);
 	// if (nearbyPhotons.size() > 0){
 	// 	result = Colour(0.3f, 0.3f, 0.3f);
 	// }
-
-	vector<Photon> nearbyPhotons = causticMap->query(point, 10);
-	if (nearbyPhotons.size() > 0){
-		result = Colour(0.3f, 0.3f, 0.3f);
-	}
 
 	return result;
 }

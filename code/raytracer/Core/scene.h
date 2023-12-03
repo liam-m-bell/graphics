@@ -57,9 +57,10 @@ public:
 
   // Photon Mapping
   bool usingPhotonMap = false;
+  int photonTraceDepth = 4;
   PhotonMap *photonMap;
   PhotonMap *causticMap;
   void photonMapping(int n);
   void photontrace(Photon ray, int recurse);
-  Colour calculateIndirectIllumination(Vector point);
+  Colour calculateIndirectIllumination(Hit *hit);
 };

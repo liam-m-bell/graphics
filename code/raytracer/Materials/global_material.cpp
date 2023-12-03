@@ -123,7 +123,7 @@ Colour GlobalMaterial::compute_per_light(Vector& viewer, Hit& hit, Vector& ldir)
 
 bool GlobalMaterial::receivePhoton(Photon *photon, Hit &hit){
 	// Russian roulette
-	float reflectProbability = 0.1f;
+	float reflectProbability = 0.8f;
 	float transmitProbability = 0.0f;
 
 	float randomValue = (float)(rand()) / (float)(RAND_MAX);
@@ -166,27 +166,69 @@ bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 }
 
 Vector GlobalMaterial::diffuseReflection(Vector normal){
-	// Use cosine weighted reflection direction (Jensen Realistic Image Synthesis using photon mapping)
+	//https://blog.selfshadow.com/2011/10/17/perp-vectors/
+	Vector a = Vector(abs(normal.x), abs(normal.y), abs(normal.z));
+    Vector perp;
+
+    if (a.x <= a.y && a.x <= a.z)
+        perp = Vector(0, -normal.z, normal.y);
+    else if (a.y <= a.x && a.y <= a.z)
+        perp = Vector(-normal.z, 0, normal.x);
+    else
+        perp = Vector(-normal.y, normal.x, 0);
+
+	perp.normalise();
+
+	Vector perp2;
+	perp.cross(normal, perp2);
+
+	perp2.normalise();
+	
+
+	// Use cosine weighted reflection direction (https://pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations#ConcentricSampleDisk)
 	std::default_random_engine generator;
+	generator.seed(rand());
  	std::uniform_real_distribution<float> distribution(0.0f,1.0f);
 
 	float u = distribution(generator);
 	float v = distribution(generator);
 
-	float theta = acos(sqrt(u));
-	float phi = 2 * M_PI * v;
+	float x, y;
 
-	float x = sin(theta) * cos(phi);
-	float y = sin(theta) * sin(phi);
-	float z = cos(theta);
+    //Handle degeneracy at the origin
+    if (u == 0 && v == 0)
+        x = 0;
+		y = 0;
 
-	Vector reflection = Vector(x, y, z);
+    // Apply concentric mapping to point 
+    float theta, r;
+	if (abs(u) > abs(v)) {
+		r = u;
+		theta = M_PI_4 * (v / u);
+	} else {
+		r = v;
+		theta = M_PI_2 - M_PI_4 * (u / v);
+	}
+	x = r * cos(theta);
+	y = r * sin(theta);
 
-	x = x - (reflection.dot(normal) * normal.x);
-	y = y - (reflection.dot(normal) * normal.y);
-	z = z - (reflection.dot(normal) * normal.z);
+	float z2 = 1.0f - pow(x, 2) - pow(y, 2);
+	float z = sqrt(max(0.0f, z2));
 
-	reflection = Vector(x, y, z);
+	// float theta = acos(sqrt(u));
+	// float phi = 2 * M_PI * v;
+
+	// float x = sin(theta) * cos(phi);
+	// float y = sin(theta) * sin(phi);
+	// float z = cos(theta);
+
+	// Vector reflection = Vector(x, y, z);
+
+	// x = x - (reflection.dot(normal) * normal.x);
+	// y = y - (reflection.dot(normal) * normal.y);
+	// z = z - (reflection.dot(normal) * normal.z);
+
+	Vector reflection = x * perp + y * perp2 + z * normal;
 	reflection.normalise();
 
 	return reflection;

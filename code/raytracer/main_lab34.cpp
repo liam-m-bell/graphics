@@ -207,7 +207,7 @@ void build_box(Scene& scene){
 	cube->apply_transform(*scaleTransform);
 	cube->apply_transform(*teapotTransform);
 	cube->apply_transform(*objectTransform);
-	scene.add_object(cube);
+	//scene.add_object(cube);
 
 	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(light);
@@ -219,8 +219,8 @@ int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 1024;
-	int height = 1024;
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 	build_box(scene);
 
 	// Photon Mapping
-	//scene.photonMapping(10000);
+	scene.photonMapping(50000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);
