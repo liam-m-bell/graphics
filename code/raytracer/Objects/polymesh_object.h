@@ -22,8 +22,12 @@
 
 #include <vector>
 #include <array>
+#include <map>
+#include <string>
 
 #include "../Core/object.h"
+#include "../Core/material.h"
+#include "../Core/environment.h"
 
 typedef array<int, 3> TriangleIndex;
 
@@ -32,14 +36,16 @@ public:
 
 	Hit *intersection(Ray ray);
 	void apply_transform(Transform& trans);
-	void triangulatePolygon(int* P, int* normals, int n);
+	void triangulatePolygon(int* P, int* normals, int n, string material);
 	Vector getTriangleNormal(TriangleIndex t);
-	void addTriangle(TriangleIndex t, int* P, int* normals);
+	void addTriangle(TriangleIndex t, int* P, int* normals, string material);
 	bool intersectsTriangle(Vertex ray, int t, Vector normal);
 	void calculateVertexNormals();
 	Vector getInterpolatedNormal(int t, Vertex P);
+	void loadMaterial(string file, Environment* p_env);
+	Material *getFaceMaterial(string material);
 
-    PolyMesh(char *file, bool smooth);
+    PolyMesh(char *file, bool smooth, bool useMaterial, Environment* env);
 	~PolyMesh(){}
 
 	bool smooth;
@@ -60,4 +66,9 @@ public:
 
 	vector<int> vertexNormals; 
 	vector<vector<int>> vertexTriangles;
+
+	int materialCount;
+	map<string, Material*> materials;
+	vector<string> triangleMaterials;
+
 };

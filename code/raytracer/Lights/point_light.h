@@ -16,35 +16,23 @@
 * produced it.
 */
 
-// Hit is a class to store and maniplulate information about an intersection
-// between a ray and an object.
+// DirectionaLight is a child class of Light and implements a light
+// with constant value in a given direction. The light has no position
+// and can be treated as infinitely far away.
 
 #pragma once
+#include "../Core/light.h"
 
-#include <iostream>
-using namespace std;
-
-#include "vertex.h"
-#include "vector.h"
-#include "tex_coords.h"
-
-class Object;
-
-class Hit {
+class PointLight : public Light {
 public:
-	static Hit *free_pool;
-	static int allocated;
-	static int pool_size;
 
-	float     t;			// The intersection distance
-	bool      entering;     // True if entering an object, false if leaving
-	Hit      *next;		    // The next hit in a list along a ray
-	Object   *what;		    // the primitive object that has been hit
-	Vertex    position;	    // the position of intersection
-	Vector    normal;		// the normal at the point of intersection
-	TexCoords coordinates;  // the texture coordinates at the point of intersection
-	string material;
+	Vertex position;
+	Colour intensity;
 
-	void* operator new(size_t size);
-	void operator delete(void* p);
+	PointLight();
+	PointLight(Vertex position, Colour col);
+
+	bool get_direction(Vertex &surface, Vector &dir);
+	void get_intensity(Vertex &surface, Colour &intensity);
+
 };

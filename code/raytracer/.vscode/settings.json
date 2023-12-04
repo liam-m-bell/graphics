@@ -7,6 +7,11 @@
         "string_view": "cpp",
         "random": "cpp",
         "functional": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "*.tcc": "cpp",
+        "fstream": "cpp",
+        "new": "cpp",
+        "optional": "cpp",
+        "variant": "cpp"
     }
 }

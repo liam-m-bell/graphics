@@ -25,6 +25,11 @@
 
 #include "polymesh_object.h"
 
+#include "../Materials/phong_material.h"
+#include "../Materials/global_material.h"
+#include "../Materials/compound_material.h"
+#include "../Materials/mesh_material.h"
+
 using namespace std;
 
 Vector PolyMesh::getTriangleNormal(TriangleIndex t){
@@ -52,7 +57,14 @@ void PolyMesh::calculateVertexNormals(){
     }
 }
 
-void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[]){
+void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[], string material){
+    Vector normal = getTriangleNormal({ P[t[0]], P[t[1]], P[t[2]] });
+    if (isnan(normal.x)){
+        return;
+    }
+
+    triangleNormals.push_back(normal);
+
     triangle.push_back({ P[t[0]], P[t[1]], P[t[2]] });
 
     for (int i = 0; i < 3; i++){
@@ -70,22 +82,22 @@ void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[]){
         }
     }
 
-    // Add face normal
-    Vector normal = getTriangleNormal(triangle[triangle_count]);
-    triangleNormals.push_back(normal);
+
+    // Add material
+    triangleMaterials.push_back(material);
 
     triangle_count++;
 }
 
-void PolyMesh::triangulatePolygon(int P[], int N[], int n){
+void PolyMesh::triangulatePolygon(int P[], int N[], int n, string material){
     if (n == 3){
         // Already a triangle
-        addTriangle({0, 1, 2}, P, N);
+        addTriangle({0, 1, 2}, P, N, material);
     }
     else if (n == 4){
         // Split quadralateral into two triangles
-        addTriangle({0, 1, 2}, P, N);
-        addTriangle({0, 2, 3}, P, N);
+        addTriangle({0, 1, 2}, P, N, material);
+        addTriangle({0, 2, 3}, P, N, material);
     }
     else{
         // Not currently implemented for n-polygons, n >= 5 
@@ -93,7 +105,7 @@ void PolyMesh::triangulatePolygon(int P[], int N[], int n){
     }
 }
 
-PolyMesh::PolyMesh(char* file, bool smooth)
+PolyMesh::PolyMesh(char* file, bool smooth, bool useMaterial, Environment* env)
 {
     this->smooth = smooth;
 
@@ -101,9 +113,17 @@ PolyMesh::PolyMesh(char* file, bool smooth)
     triangle_count = 0;
     normalsCount = 0;
 
+    materialCount = 0;
+    if (useMaterial){
+        set_material(new MeshMaterial());
+    }
+
     // Open OBJ
     ifstream modelFile;
     modelFile.open(file);
+
+    // Material
+    string faceMaterial;
 
     string line;
     // Read each line
@@ -178,7 +198,17 @@ PolyMesh::PolyMesh(char* file, bool smooth)
                 fvCount++;
             }
 
-            triangulatePolygon(faceVerticies, faceVertexNormals, fvCount);
+            triangulatePolygon(faceVerticies, faceVertexNormals, fvCount, faceMaterial);
+        }
+        else if (lineHeader == "mtllib"){
+            // Material Library
+            string matFile;
+            iss >> matFile;
+            loadMaterial(matFile, env);
+        }
+        else if (lineHeader == "usemtl"){
+            // Material 
+            iss >> faceMaterial;
         }
     }
     modelFile.close();
@@ -282,7 +312,7 @@ Hit* PolyMesh::intersection(Ray ray)
 
         if (intersectsTriangle(P, i, normal)){
             // Intersects
-            if (best_hit ){
+            if (best_hit){
                 delete best_hit;
             }
 
@@ -305,7 +335,10 @@ Hit* PolyMesh::intersection(Ray ray)
             {
                 hit->normal.negate();
             }
-            
+
+            // Add material to Hit
+            hit->material = triangleMaterials[i];
+
             hit->what = this;
             hit->next = 0;
             
@@ -338,4 +371,96 @@ void PolyMesh::apply_transform(Transform& trans)
     for (int i = 0; i < normalsCount; i++){
         trans.apply(normals[i]);
     }
+}
+
+struct OBJMaterial{
+    string name;
+    Colour Ka;
+    Colour Kd;
+    Colour Ks;
+    int Ns;
+    Colour Tr;
+    Colour Tf;
+    float Ni = 1;
+};
+
+void PolyMesh::loadMaterial(string file, Environment* env){
+    // Open Material file
+    ifstream matFile;
+    matFile.open(file);
+
+    OBJMaterial faceMaterial;
+    string line;
+    // Read each line
+    while (getline(matFile, line)){
+        // Get line header
+        istringstream iss(line);
+        string lineHeader;
+        iss >> lineHeader;
+
+        if (lineHeader == "newmtl"){
+            if (materialCount > 0){
+                CompoundMaterial *compoundMat = new CompoundMaterial(2);
+                compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
+                compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
+                
+                materials[faceMaterial.name] = compoundMat;
+            }
+            faceMaterial = OBJMaterial();
+            string name;
+            iss >> name;
+            faceMaterial.name = name;
+            materialCount++;
+        }
+        else if (lineHeader == "Ka"){
+            float r, g, b;
+            iss >> r >> g >> b;
+            faceMaterial.Ka = Colour(r, g, b);
+        }
+        else if (lineHeader == "Kd"){
+            float r, g, b;
+            iss >> r >> g >> b;
+            faceMaterial.Kd = Colour(r, g, b);
+        }
+        else if (lineHeader == "Ks"){
+            float r, g, b;
+            iss >> r >> g >> b;
+            faceMaterial.Ks = Colour(r, g, b);
+        }
+        else if (lineHeader == "Ks"){
+            int Ns;
+            iss >> Ns;
+            faceMaterial.Ns = Ns;
+        }
+        else if (lineHeader == "Tr"){
+            float r, g, b;
+            iss >> r >> g >> b;
+            faceMaterial.Tr = Colour(r, g, b);
+        }
+        else if (lineHeader == "Tf"){
+            float r, g, b;
+            iss >> r >> g >> b;
+            faceMaterial.Tf = Colour(r, g, b);
+        }
+        else if (lineHeader == "Ks"){
+            float Ni;
+            iss >> Ni;
+            faceMaterial.Ni = Ni;
+        }
+    }
+
+    if (materialCount > 0){
+        CompoundMaterial *compoundMat = new CompoundMaterial(2);
+        compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
+        compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
+        
+        materials[faceMaterial.name] = compoundMat;
+    }
+
+    matFile.close();
+}
+
+Material* PolyMesh::getFaceMaterial(string matName){
+    Material *mat = materials[matName];
+    return mat;
 }

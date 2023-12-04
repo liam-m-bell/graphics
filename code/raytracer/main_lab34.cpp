@@ -36,6 +36,7 @@
 
 // classes that contain our lights, all derived from Light
 #include "Lights/directional_light.h"
+#include "Lights/point_light.h"
 
 // classes that contain the materials applied to an object, all derived from Material
 #include "Materials/phong_material.h"
@@ -57,7 +58,18 @@ void build_scene(Scene& scene)
 	// 	0.0f, 0.0f, 1.0f, 0.0f,
 	// 	0.0f, 1.0f, 0.0f, 0.0f,
 	// 	0.0f, 0.0f, 0.0f, 1.0f);
+	// Transform * teapotTransform = new Transform(
+	// 	1.0f, 0.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 1.0f, 0.0f,
+	// 	0.0f, 1.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 
+	// PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false, false, &scene);
+	// Transform * transform = new Transform(
+	// 	0.12f, 0.0f, 0.0f, -3.0f,
+	// 	0.0f, 0.12f, 0.0f, 0.2f,
+	// 	0.0f, 0.0f, 0.12f, -6.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 	// PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
 	// Transform * transform = new Transform(
 	// 	0.12f, 0.0f, 0.0f, -3.0f,
@@ -68,8 +80,19 @@ void build_scene(Scene& scene)
 	// pm->apply_transform(*teapotTransform);
 	// pm->apply_transform(*transform);
 	// pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	//scene.add_object(pm);
+	// pm->apply_transform(*teapotTransform);
+	// pm->apply_transform(*transform);
+	// pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
 	// //scene.add_object(pm);
 
+	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
+	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
+	Transform * transform2 = new Transform(
+		0.0f, 0.0f, 2.0f, 1.0f,
+		0.0f, 2.0f, 0.0f, 0.2f,
+		2.0f, 0.0f, 0.0f, -4.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
 	// PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
 	// Transform * transform2 = new Transform(
 	// 	0.12f, 0.0f, 0.0f, 0.0f,
@@ -97,13 +120,30 @@ void build_scene(Scene& scene)
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
 	CompoundMaterial *sp3mat = new CompoundMaterial(2);
 	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
-	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.1f));
+	//sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.0f));
+	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.5, 0.5, 0.5), 1.1f));
 	sp3->set_material(sp3mat);
 	//scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0, 0, 0.1), 10));
+	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
 	scene.add_object(p1);
+
+	Plane *p2 = new Plane(0, 1, 0, -10);
+	p2->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	//scene.add_object(p2);
+
+	Plane *p3 = new Plane(-1, 0, 0, 10);
+	p3->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	//scene.add_object(p3);
+
+	Plane *p4 = new Plane(1, 0, 0, -10);
+	p4->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	//scene.add_object(p4);
+
+	Plane *p5 = new Plane(0, 0, -1, 20);
+	p5->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	//scene.add_object(p5);
 
 	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l1);
@@ -136,8 +176,8 @@ void build_scene(Scene& scene)
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 512;
-	int height = 512;
+	int width = 1024;
+	int height = 1024;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 	
