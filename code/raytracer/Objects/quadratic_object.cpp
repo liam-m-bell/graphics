@@ -44,15 +44,6 @@ Hit *Quadratic::intersection(Ray ray)
 
 	Vertex P = ray.position;
 	Vector D = ray.direction;
-	// Vertex D = Vertex(ray.direction.x, ray.direction.y, ray.direction.z);
-
-	// Vertex _P, _D;
-	// transform.apply(P, _P);
-	// transform.apply(D, _D);
-
-	// float A = D.dot(_D);
-	// float B = P.dot(_D) + D.dot(_P);
-	// float C = P.dot(_P);
 
 	float A = a * pow(D.x, 2) + 
 		2 * b * D.x * D.y +

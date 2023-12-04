@@ -92,7 +92,7 @@ void build_scene(Scene& scene)
 	p0mat->include_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
 	p0->set_material(p0mat);
-	scene.add_object(p0);
+	//scene.add_object(p0);
 
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
 	CompoundMaterial *sp3mat = new CompoundMaterial(2);
@@ -108,16 +108,16 @@ void build_scene(Scene& scene)
 	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l1);
 
-	Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
-	scene.add_light(l2);
+	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
+	// scene.add_light(l2);
 
-	Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
-	scene.add_light(l3);
+	// Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
+	// scene.add_light(l3);
 
 	// Quadratics
-	Quadratic *quad = new Quadratic(0, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+	Quadratic *quad = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, -1);
 	quad->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0.1, 0), Colour(0.3, 0, 0), 10));
-	//scene.add_object(quad);
+	scene.add_object(quad);
 
 	Transform * quadtransform = new Transform(
 	1.0f, 0.0f, 0.0f, -3.0f,
@@ -129,7 +129,7 @@ void build_scene(Scene& scene)
 
 	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
 	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
-	scene.add_object(sp2);
+	//scene.add_object(sp2);
 }
 
 
@@ -149,8 +149,11 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	Vertex position(-2.0f, 2.0f, -8.0f);
-	Vector lookat(0.2f, -0.2f, 1.0f);
+	// Vertex position(0.0f, 10.0f, 0.0f);
+	// Vector lookat(0.0f, -1.0f, 0.0f);
+	// Vector up(0.0f, 0.0f, 1.0f);
+	Vertex position(0.0f, 0.0f, -20.0f);
+	Vector lookat(0.0f, 0.0f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);
 	
