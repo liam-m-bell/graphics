@@ -156,20 +156,20 @@ void build_scene(Scene& scene)
 
 	// Quadratics
 	Quadratic *quad = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, -1);
-	quad->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0.1, 0), Colour(0.3, 0, 0), 10));
+	quad->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.3, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10));
 	scene.add_object(quad);
 
 	Transform * quadtransform = new Transform(
-	1.0f, 0.0f, 0.0f, -3.0f,
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f);
-	//quad->apply_transform(*quadtransform);
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	quad->apply_transform(*quadtransform);
 
 
 	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
-	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
-	//scene.add_object(sp2);
+	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.3, 0), Colour(0.1, 0.1, 0.1), 10));
+	scene.add_object(sp2);
 }
 
 
@@ -189,10 +189,10 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	// Vertex position(0.0f, 10.0f, 0.0f);
+	// Vertex position(0.0f, 8.0f, 0.0f);
 	// Vector lookat(0.0f, -1.0f, 0.0f);
 	// Vector up(0.0f, 0.0f, 1.0f);
-	Vertex position(0.0f, 0.0f, -20.0f);
+	Vertex position(0.0f, 1.0f, -10.0f);
 	Vector lookat(0.0f, 0.0f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
 	Camera* camera = new FullCamera(0.75f, position, lookat, up);

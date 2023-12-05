@@ -30,7 +30,24 @@ Quadratic::Quadratic(float p_a, float p_b, float p_c, float p_d,
 }
 
 Hit *Quadratic::intersection(Ray ray)
-{
+{		
+
+	// // tack on w component
+	// Vertex C4 = ray.position;
+	// Vertex D4 = Vertex(ray.direction.x, ray.direction.y, ray.direction.z);
+	
+	// // matrix-vector multiply
+	// Vertex AD;
+	// transform.apply(D4, AD);
+	// Vertex AC;
+	// transform.apply(C4, AC);
+	
+	// // Quadratic equation terms:
+	// float A = D4.dot(AD); // t^2 term
+	// float B = C4.dot(AD) + D4.dot(AC);  // t term
+	// float C = C4.dot(AC); // constant term
+	
+
 	float a = transform.matrix[0][0];
     float b = transform.matrix[0][1];
     float c = transform.matrix[0][2];
@@ -44,49 +61,50 @@ Hit *Quadratic::intersection(Ray ray)
 
 	Vertex P = ray.position;
 	Vector D = ray.direction;
+	D.normalise();
 
-	float A = a * pow(D.x, 2) + 
-		2 * b * D.x * D.y +
-		2 * c * D.x * D.z +
+	float A = a * pow(D.x, 2)+ 
+		2.0 * b * D.x * D.y +
+		2.0 * c * D.x * D.z +
 		e * pow(D.y, 2) +
-		2 * f * D.y * D.z +
+		2.0 * f * D.y * D.z +
 		h * pow(D.z, 2);
 
-	float B = 2 * (a * P.x * D.x +
+	float B = 2.0 * (a * P.x * D.x +
 		b * (P.x * D.y + D.x * P.y) +
 		c * (P.x * D.z + D.x * P.z) +
 		d * D.x +
 		e * P.y * D.y +
 		f * (P.y * D.z + D.y * P.z) +
 		g * D.y +
-		h * P.z + D.z +
+		h * P.z * D.z +
 		i * D.z);
 
 	float C = a * pow(P.x, 2) +
-		2 * b * P.x * P.y +
-		2 * c * P.x * P.z +
-		2 * d * P.x +
+		2.0 * b * P.x * P.y +
+		2.0 * c * P.x * P.z +
+		2.0 * d * P.x +
 		e * pow(P.y, 2) +
-		2 * f * P.y * P.z +
-		2 * g * P.y +
+		2.0 * f * P.y * P.z +
+		2.0 * g * P.y +
 		h * pow(P.z, 2) +
-		2 * i * P.z +
+		2.0 * i * P.z +
 		j;
 
 
-	float discriminant = pow(B, 2) - (4 * A * C);
+	float discriminant = pow(B, 2) - (4.0 * A * C);
 
-	if (discriminant <= 0){
+	if (discriminant < 0){
 		return 0;
 	}
 	else{
-		float t0 = (-B - sqrt(discriminant)) / (2 * A);
+		float t0 = (-B - sqrt(discriminant)) / (2.0 * A);
 
 		if (t0 < 0){
 			return 0;
 		}
 		else{
-			Vertex position1 = ray.position + t0 * ray.direction;
+			Vertex position1 = P + t0 * D;
 			Vector normal1;
 			normal1.x = a * position1.x + b * position1.y + c * position1.z + d;
 			normal1.y = b * position1.x + e * position1.y + f * position1.z + g;
@@ -106,8 +124,8 @@ Hit *Quadratic::intersection(Ray ray)
 			hit1->normal = normal1;
 			hit1->what = this;
 
-			float t1 = (-B + sqrt(discriminant)) / (2 * A);
-			Vertex position2 = ray.position + t1 * ray.direction;
+			float t1 = (-B + sqrt(discriminant)) / (2.0 * A);
+			Vertex position2 = P + t1 * D;
 			Vector normal2;
 			normal2.x = a * position2.x + b * position2.y + c * position2.z + d;
 			normal2.y = b * position2.x + e * position2.y + f * position2.z + g;
