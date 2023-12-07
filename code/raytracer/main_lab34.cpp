@@ -126,7 +126,7 @@ void build_scene(Scene& scene)
 	//scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.2, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10));
+	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.15, 0.07, 0.4), Colour(0.1, 0.1, 0.1), 10));
 	scene.add_object(p1);
 
 	Plane *p2 = new Plane(0, 1, 0, -10);
@@ -155,20 +155,44 @@ void build_scene(Scene& scene)
 	// scene.add_light(l3);
 
 	// Quadratics
-	Quadratic *quad = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, -1);
-	quad->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0.1, 0), Colour(0.3, 0, 0), 10));
+	Quadratic *quad = new Quadratic(1, 0.5f, 1, 0, 1, 0, 1, 1, 0, -1);
+	quad->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.3, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10));
 	scene.add_object(quad);
 
 	Transform * quadtransform = new Transform(
-	1.0f, 0.0f, 0.0f, -3.0f,
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f);
-	//quad->apply_transform(*quadtransform);
+		1.0f, 0.0f, 0.0f, 1.5f,
+		0.0f, 1.0f, 0.0f, -2.0f,
+		0.0f, 0.0f, 1.0f, 3.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	quad->apply_transform(*quadtransform);
+
+
+	Quadratic *qsp = new Quadratic(1, -0.5, 0, 0, 1, 0, 0, 1, 0, -1);
+	qsp->set_material(new Phong(Colour(0, 0.01, 0), Colour(0.0, 0.3, 0.0), Colour(0.1, 0.1, 0.1), 10));
+	scene.add_object(qsp);
+
+	Transform * quadtransform2 = new Transform(
+		1.0f, 0.0f, 0.0f, 5.0f,
+		0.0f, 1.0f, 0.0f, -1.5f,
+		0.0f, 0.0f, 1.0f, 5.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	qsp->apply_transform(*quadtransform2);
+
+	Quadratic *qsp2 = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, -1);
+	qsp2->set_material(new Phong(Colour(0.01, 0, 0.01), Colour(0.1, 0, 0.3), Colour(0.1, 0.1, 0.1), 10));
+	scene.add_object(qsp2);
+
+	Transform * quadtransform3 = new Transform(
+		1.0f, 0.0f, 0.0f, 3.0f,
+		0.0f, 1.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 1.0f, 5.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	qsp2->apply_transform(*quadtransform3);
+
 
 
 	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
-	sp2->set_material(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10));
+	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.3, 0), Colour(0.1, 0.1, 0.1), 10));
 	//scene.add_object(sp2);
 }
 
@@ -176,8 +200,8 @@ void build_scene(Scene& scene)
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 1024;
-	int height = 1024;
+	int width = 2048;
+	int height = 2048;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 	
@@ -189,13 +213,13 @@ int main(int argc, char *argv[])
 	
 	// Declare a camera
 	//Camera *camera = new SimpleCamera(0.5f);
-	// Vertex position(0.0f, 10.0f, 0.0f);
+	// Vertex position(0.0f, 8.0f, 0.0f);
 	// Vector lookat(0.0f, -1.0f, 0.0f);
 	// Vector up(0.0f, 0.0f, 1.0f);
-	Vertex position(0.0f, 0.0f, -20.0f);
-	Vector lookat(0.0f, 0.0f, 1.0f);
+	Vertex position(-3.5f, 3.0f, -11.0f);
+	Vector lookat(0.0f, -0.1f, 1.0f);
 	Vector up(0.0f, 1.0f, 0.0f);
-	Camera* camera = new FullCamera(0.75f, position, lookat, up);
+	Camera* camera = new FullCamera(0.7f, position, lookat, up);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

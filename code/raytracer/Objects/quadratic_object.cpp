@@ -25,6 +25,7 @@ Quadratic::Quadratic(float p_a, float p_b, float p_c, float p_d,
 	float p_e, float p_f, float p_g, float p_h, float p_i, float p_j) {
 	next = (Object *)0;
 
+	// Create matrix to store the quadratic coefficients
 	transform = Transform(p_a, p_b, p_c, p_d, p_b, p_e, 
 		p_f, p_g, p_c, p_f, p_h, p_i, p_d, p_g, p_i, p_j);
 }
@@ -44,54 +45,94 @@ Hit *Quadratic::intersection(Ray ray)
 
 	Vertex P = ray.position;
 	Vector D = ray.direction;
+	D.normalise();
 
-	float A = a * pow(D.x, 2) + 
-		2 * b * D.x * D.y +
-		2 * c * D.x * D.z +
+	// Calculate coefficients for equation solving for t
+
+	float A = a * pow(D.x, 2)+ 
+		2.0 * b * D.x * D.y +
+		2.0 * c * D.x * D.z +
 		e * pow(D.y, 2) +
-		2 * f * D.y * D.z +
+		2.0 * f * D.y * D.z +
 		h * pow(D.z, 2);
 
-	float B = 2 * (a * P.x * D.x +
+	float B = 2.0 * (a * P.x * D.x +
 		b * (P.x * D.y + D.x * P.y) +
 		c * (P.x * D.z + D.x * P.z) +
 		d * D.x +
 		e * P.y * D.y +
 		f * (P.y * D.z + D.y * P.z) +
 		g * D.y +
-		h * P.z + D.z +
+		h * P.z * D.z +
 		i * D.z);
 
 	float C = a * pow(P.x, 2) +
-		2 * b * P.x * P.y +
-		2 * c * P.x * P.z +
-		2 * d * P.x +
+		2.0 * b * P.x * P.y +
+		2.0 * c * P.x * P.z +
+		2.0 * d * P.x +
 		e * pow(P.y, 2) +
-		2 * f * P.y * P.z +
-		2 * g * P.y +
+		2.0 * f * P.y * P.z +
+		2.0 * g * P.y +
 		h * pow(P.z, 2) +
-		2 * i * P.z +
+		2.0 * i * P.z +
 		j;
 
 
-	float discriminant = pow(B, 2) - (4 * A * C);
+	float discriminant = pow(B, 2) - (4.0 * A * C);
 
 	if (discriminant <= 0){
+		// No real roots, no intersection OR tangent
 		return 0;
 	}
 	else{
-		float t0 = (-B - sqrt(discriminant)) / (2 * A);
+		// First hit
+		float t0 = (-B - sqrt(discriminant)) / (2.0 * A);
 
 		if (t0 < 0){
-			return 0;
+			// Intersection is behind origin of ray, so no first intersection
+
+			// Check for second
+			float t1 = (-B + sqrt(discriminant)) / (2.0 * A);
+			if (t1 < 0){
+				// No intersection
+				return 0;
+			}
+			
+			// There is a second intersection, so calculate
+			Vertex position = P + t1 * D;
+
+			// Calculate normal
+			Vector normal;
+			normal.x = a * position.x + b * position.y + c * position.z + d;
+			normal.y = b * position.x + e * position.y + f * position.z + g;
+			normal.z = c * position.x + f * position.y + h * position.z + i;
+
+			// If normal pointing wrong way, flip it
+			if (normal.dot(ray.direction) > 0.0)
+			{
+				normal.negate();
+			}
+			normal.normalise();
+			
+			Hit* hit = new Hit();
+			hit->entering = false;
+			hit->t = t1;
+			hit->position = position;
+			hit->normal = normal;
+			hit->what = this;
+			hit->next = 0;
+			return hit;
 		}
 		else{
-			Vertex position1 = ray.position + t0 * ray.direction;
+			Vertex position1 = P + t0 * D;
+
+			// Calculate normal
 			Vector normal1;
 			normal1.x = a * position1.x + b * position1.y + c * position1.z + d;
 			normal1.y = b * position1.x + e * position1.y + f * position1.z + g;
 			normal1.z = c * position1.x + f * position1.y + h * position1.z + i;
-	
+
+			// If normal pointing wrong way, flip it
 			if (normal1.dot(ray.direction) > 0.0)
 			{
 				normal1.negate();
@@ -106,12 +147,18 @@ Hit *Quadratic::intersection(Ray ray)
 			hit1->normal = normal1;
 			hit1->what = this;
 
-			float t1 = (-B + sqrt(discriminant)) / (2 * A);
-			Vertex position2 = ray.position + t1 * ray.direction;
+
+			// Calculate second intersection point
+			float t1 = (-B + sqrt(discriminant)) / (2.0 * A);
+			Vertex position2 = P + t1 * D;
+
+			// Calculate normal
 			Vector normal2;
 			normal2.x = a * position2.x + b * position2.y + c * position2.z + d;
 			normal2.y = b * position2.x + e * position2.y + f * position2.z + g;
 			normal2.z = c * position2.x + f * position2.y + h * position2.z + i;
+
+			// If normal pointing wrong way, flip it
 			if (normal2.dot(ray.direction) > 0.0)
 			{
 				normal2.negate();

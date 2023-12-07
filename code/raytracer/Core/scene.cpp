@@ -151,7 +151,7 @@ void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 		  // Put the shadow check here, if lit==true and in shadow, set lit=false
 		  if (lit)
 		  {
-			  float shadowRayStartOffset =0.0001f;
+			  float shadowRayStartOffset =0.001f;
 		  	  float shadowLimit = 1000000000.0f;
 			  Ray shadow_ray;
 

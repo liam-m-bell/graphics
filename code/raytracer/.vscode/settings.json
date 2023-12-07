@@ -12,6 +12,7 @@
         "fstream": "cpp",
         "new": "cpp",
         "optional": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "complex": "cpp"
     }
 }
