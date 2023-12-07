@@ -32,6 +32,7 @@
 #include "Objects/polymesh_object.h"
 #include "Objects/sphere_object.h"
 #include "Objects/plane_object.h"
+#include "Objects/quadratic_object.h"
 
 // classes that contain our lights, all derived from Light
 #include "Lights/directional_light.h"
@@ -57,8 +58,19 @@ void build_scene(Scene& scene)
 	// 	0.0f, 0.0f, 1.0f, 0.0f,
 	// 	0.0f, 1.0f, 0.0f, 0.0f,
 	// 	0.0f, 0.0f, 0.0f, 1.0f);
+	// Transform * teapotTransform = new Transform(
+	// 	1.0f, 0.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 1.0f, 0.0f,
+	// 	0.0f, 1.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 
 	// PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false, false, &scene);
+	// Transform * transform = new Transform(
+	// 	0.12f, 0.0f, 0.0f, -3.0f,
+	// 	0.0f, 0.12f, 0.0f, 0.2f,
+	// 	0.0f, 0.0f, 0.12f, -6.0f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
+	// PolyMesh *pm = new PolyMesh((char *)"teapot.obj", false);
 	// Transform * transform = new Transform(
 	// 	0.12f, 0.0f, 0.0f, -3.0f,
 	// 	0.0f, 0.12f, 0.0f, 0.2f,
@@ -69,6 +81,10 @@ void build_scene(Scene& scene)
 	// pm->apply_transform(*transform);
 	// pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
 	//scene.add_object(pm);
+	// pm->apply_transform(*teapotTransform);
+	// pm->apply_transform(*transform);
+	// pm->set_material(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	// //scene.add_object(pm);
 
 	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
 	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
@@ -77,10 +93,17 @@ void build_scene(Scene& scene)
 		0.0f, 2.0f, 0.0f, 0.2f,
 		2.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
+	// PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
+	// Transform * transform2 = new Transform(
+	// 	0.12f, 0.0f, 0.0f, 0.0f,
+	// 	0.0f, 0.12f, 0.0f, 0.2f,
+	// 	0.0f, 0.0f, 0.12f, -11.5f,
+	// 	0.0f, 0.0f, 0.0f, 1.0f);
 
-	//pm2->apply_transform(*teapotTransform);
-	pm2->apply_transform(*transform2);
-	scene.add_object(pm2);
+	// pm2->apply_transform(*teapotTransform);
+	// pm2->apply_transform(*transform2);
+	// pm2->set_material(new Phong(Colour(0.1, 0.1, 0.1), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 50));
+	//scene.add_object(pm2);
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
 	sp1->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
@@ -131,12 +154,15 @@ void build_scene(Scene& scene)
 	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	// scene.add_light(l2);
 
-	//Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
+	// Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
 	// scene.add_light(l3);
 
 	Light *l0 = new PointLight(Vertex(1.0f, 2.0f, -8.0f), Colour(0.1, 0.1, 0.1));
 	scene.add_light(l0);
 
+	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
+	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.3, 0), Colour(0.1, 0.1, 0.1), 10));
+	//scene.add_object(sp2);
 }
 
 void build_box(Scene& scene){
