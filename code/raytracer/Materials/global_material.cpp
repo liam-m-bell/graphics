@@ -31,6 +31,15 @@ GlobalMaterial::GlobalMaterial(Environment* p_env, Colour p_reflect_weight, Colo
 	phongMat = p_phongMat;
 }
 
+// Get the reflected direction of a perfect specular reflection
+Vector GlobalMaterial::specularReflection(Vector incident, Vector normal){
+	incident.normalise();
+	normal.normalise();
+	Vector reflection = incident - (2.0f * incident.dot(normal) * normal);
+	reflection.normalise();
+	return reflection;
+}
+
 Colour GlobalMaterial::reflection(Vector& view, Hit& hit, int recurse){
 	Colour result = Colour(0, 0, 0);
 
@@ -41,7 +50,9 @@ Colour GlobalMaterial::reflection(Vector& view, Hit& hit, int recurse){
 	float reflectedRayStartOffset = 0.0005;
 	reflection.position = hit.position + (reflectedRayStartOffset * reflection.direction);
 
-	float depth = 1;
+	float depth = 0.0f;
+	
+	// Raytrace, decrementing recurse to implement hard limit of reflection recursion depth
 	environment->raytrace(reflection, recurse - 1, result, depth);
 
 	return result;
@@ -54,6 +65,7 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	view.normalise();
 	Vector I = -view;
 
+	// Light exiting material, so relative ior of medium-boundary inverted
 	float relativeIor = ior;
 	if (!hit.entering){
 		float relativeIor = 1/ior;
@@ -62,11 +74,11 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	float cosThetaI = normal.dot(I);
 	float cosThetaT = sqrt(1 - (1/pow(relativeIor, 2)) * (1 - pow(cosThetaI, 2)));
 
-	// Fresnel term
-	float rPar = ((relativeIor * cosThetaI) - cosThetaT) / ((relativeIor * cosThetaI) + cosThetaT);
-	float rPer = (cosThetaI - (relativeIor * cosThetaT)) / (cosThetaI + (relativeIor * cosThetaT));
+	// Calculate Fresnel term
+	float rPar = pow(((relativeIor * cosThetaI) - cosThetaT) / ((relativeIor * cosThetaI) + cosThetaT), 2);
+	float rPer = pow((cosThetaI - (relativeIor * cosThetaT)) / (cosThetaI + (relativeIor * cosThetaT)), 2);
 
-	Colour kR = Colour(1, 1, 1) * 0.5f * (pow(rPar, 2) + pow(rPer, 2));
+	Colour kR = Colour(1, 1, 1) * 0.5f * (rPar + rPer);
 	Colour kT  = Colour(1, 1, 1) + (kR * Colour(-1, -1, -1));
  
 
@@ -81,17 +93,20 @@ Colour GlobalMaterial::refraction(Vector& view, Hit& hit, int recurse){
 	refractedRay.position = hit.position + (refractedRayStartOffset * refractedRay.direction);
 
 	float depth = 1.0f;
-	environment->raytrace(refractedRay, recurse - 1, result, depth);
+	environment->raytrace(refractedRay, recurse, result, depth);
 
 	if (isnan(result.r)){
 		result = Colour();
 	}
+
 	result = refractWeight * kT * result ;
 
 	Colour reflectResult = reflection(view, hit, recurse);
 	if (isnan(reflectResult.r)){
 		reflectResult = Colour();
 	}
+
+
 	result = result + (reflectResult * kR);
 
 	return result;
@@ -103,11 +118,11 @@ Colour GlobalMaterial::compute_once(Ray& viewer, Hit& hit, int recurse)
 	Colour result = phongMat->compute_once(viewer, hit,  recurse);
 	
 	if (recurse != 0){
-		if (refractWeight.r > 0){
+		if (refractWeight.r > 0 || refractWeight.g > 0|| refractWeight.b > 0){
 			result += refraction(viewer.direction, hit, recurse);
 		}
-		if (reflectWeight.r > 0){
-			result += reflection(viewer.direction, hit, recurse);
+		if (reflectWeight.r > 0|| reflectWeight.g > 0|| reflectWeight.b > 0){
+			result += reflectWeight * reflection(viewer.direction, hit, recurse);
 		}
 	}
 
@@ -166,7 +181,7 @@ bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 }
 
 Vector GlobalMaterial::diffuseReflection(Vector normal){
-	//https://blog.selfshadow.com/2011/10/17/perp-vectors/
+	//Perpendicular vector to to normal found using https://blog.selfshadow.com/2011/10/17/perp-vectors/
 	Vector a = Vector(abs(normal.x), abs(normal.y), abs(normal.z));
     Vector perp;
 
@@ -215,30 +230,9 @@ Vector GlobalMaterial::diffuseReflection(Vector normal){
 	float z2 = 1.0f - pow(x, 2) - pow(y, 2);
 	float z = sqrt(max(0.0f, z2));
 
-	// float theta = acos(sqrt(u));
-	// float phi = 2 * M_PI * v;
-
-	// float x = sin(theta) * cos(phi);
-	// float y = sin(theta) * sin(phi);
-	// float z = cos(theta);
-
-	// Vector reflection = Vector(x, y, z);
-
-	// x = x - (reflection.dot(normal) * normal.x);
-	// y = y - (reflection.dot(normal) * normal.y);
-	// z = z - (reflection.dot(normal) * normal.z);
-
 	Vector reflection = x * perp + y * perp2 + z * normal;
 	reflection.normalise();
 
-	return reflection;
-}
-
-Vector GlobalMaterial::specularReflection(Vector incident, Vector normal){
-	incident.normalise();
-	normal.normalise();
-	Vector reflection = incident - (2.0f * incident.dot(normal) * normal);
-	reflection.normalise();
 	return reflection;
 }
 

@@ -64,12 +64,14 @@ std::vector<Photon> PointLight::getPhotons(int n){
 			direction.x = distribution(generator);
 			direction.y = distribution(generator);
 			direction.z = distribution(generator);
-		} while (direction.len_sqr() > 1.0f || direction.y >= 0);
+		} while (direction.len_sqr() > 1.0f || direction.y >= 0); // Also reject directions which don't point downwards. Yes this is hard coded as this is scene specfic atm.
 
 		Photon photon;
 		photon.position = position;
 		direction.normalise();
 		photon.direction = direction;
+
+		// Distribute the lights totale energy evenly for all the photons
 		photon.energy = intensity * (1/(float)n);
 
 		photons.push_back(photon);
