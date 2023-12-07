@@ -64,3 +64,4 @@ Colour Phong::compute_per_light(Vector& viewer, Hit& hit, Vector& ldir)
 	return result;
 }
 
+

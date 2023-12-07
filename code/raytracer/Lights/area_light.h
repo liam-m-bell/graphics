@@ -16,18 +16,19 @@
 * produced it.
 */
 
-
 #pragma once
 #include "../Core/light.h"
 
-class PointLight : public Light {
+class AreaLight : public Light {
 public:
 
 	Vertex position;
+	Vector normal;
+	float size;
 	Colour intensity;
 
-	PointLight();
-	PointLight(Vertex position, Colour col);
+	AreaLight();
+	AreaLight(Vertex position, Colour col);
 
 	bool get_direction(Vertex &surface, Vector &dir);
 	void get_intensity(Vertex &surface, Colour &intensity);

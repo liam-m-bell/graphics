@@ -89,9 +89,9 @@ void build_scene(Scene& scene)
 	PolyMesh *pm2 = new PolyMesh((char *)"craft.obj", false, true, &scene);
 	//pm2->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
 	Transform * transform2 = new Transform(
-		0.0f, 0.0f, 2.0f, 1.0f,
+		0.0f, 0.0f, 2.0f, -2.0f,
 		0.0f, 2.0f, 0.0f, 0.2f,
-		2.0f, 0.0f, 0.0f, -4.0f,
+		2.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 	// PolyMesh *pm2 = new PolyMesh((char *)"teapot.obj", true);
 	// Transform * transform2 = new Transform(
@@ -106,27 +106,30 @@ void build_scene(Scene& scene)
 	//scene.add_object(pm2);
 	
 	Sphere *sp1 = new Sphere(Vertex(0.0f,0.5f,1.5f),0.5f);
-	sp1->set_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
-	//scene.add_object(sp1);
+	sp1->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
+		(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10))));
+	scene.add_object(sp1);
+	
+	Sphere *sp2 = new Sphere(Vertex(2.0f,1.0f,10.0f),1.0f);
+	sp2->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.1f, 
+		(new Phong(Colour(0, 0.1, 0), Colour(0, 0.3, 0), Colour(0, 0.1, 0), 10))));
+	scene.add_object(sp2);
+
 	
 
-	Plane *p0 = new Plane(0, 0, 1, -5);
-	CompoundMaterial *p0mat = new CompoundMaterial(2);
-	p0mat->include_material(new Phong(Colour(0.05, 0, 0), Colour(0.1, 0, 0), Colour(0.3, 0, 0), 10));
-	//p0mat->include_material(new GlobalMaterial(&scene, Colour(1, 1, 1), Colour(0.0, 0.0, 0.0), 1.0f));
-	p0->set_material(p0mat);
+	Plane *p0 = new Plane(0, 0, 1, -20);
+	p0->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.03, 0, 0), Colour(0.5, 0.1, 0.1), Colour(0.1, 0.1, 0.1), 10))));
 	//scene.add_object(p0);
 
 	Sphere *sp3 = new Sphere(Vertex(0.6f,2.0f,4.0f),2.0f);
-	CompoundMaterial *sp3mat = new CompoundMaterial(2);
-	sp3mat->include_material(new Phong(Colour(0.01, 0, 0.), Colour(0.1, 0, 0), Colour(0.1, 0.1, 0.1), 10));
-	//sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.2, 0.2, 0.2), Colour(0.5, 0.5, 0.5), 1.0f));
-	sp3mat->include_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.5, 0.5, 0.5), 1.1f));
-	sp3->set_material(sp3mat);
-	//scene.add_object(sp3);
+	sp3->set_material(new GlobalMaterial(&scene, Colour(0.5, 0.5, 0.5), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.02, 0.02, 0.02), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(sp3);
 
 	Plane *p1 = new Plane(0, -1, 0, 0);
-	p1->set_material(new Phong(Colour(0, 0, 0.03), Colour(0.15, 0.07, 0.4), Colour(0.1, 0.1, 0.1), 10));
+	p1->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0, 0, 0.03), Colour(0.1, 0.1, 0.5), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(p1);
 
 	Plane *p2 = new Plane(0, 1, 0, -10);
@@ -146,7 +149,7 @@ void build_scene(Scene& scene)
 	//scene.add_object(p5);
 
 	Light *l1 = new DirectionalLight(Vector(-1.0f, -0.5f, 1.0f), Colour(0.1, 0.1, 0.1));
-	scene.add_light(l1);
+	//scene.add_light(l1);
 
 	// Light *l2 = new DirectionalLight(Vector(1.0f, -1.0f, 1.0f), Colour(0.2, 0.2, 0.2));
 	// scene.add_light(l2);
@@ -154,72 +157,123 @@ void build_scene(Scene& scene)
 	// Light *l3 = new DirectionalLight(Vector(1.0f, -0.5f, -1.0f), Colour(0.1, 0.1, 0.1));
 	// scene.add_light(l3);
 
-	// Quadratics
-	Quadratic *quad = new Quadratic(1, 0.5f, 1, 0, 1, 0, 1, 1, 0, -1);
-	quad->set_material(new Phong(Colour(0.01, 0, 0), Colour(0.3, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10));
-	scene.add_object(quad);
-
-	Transform * quadtransform = new Transform(
-		1.0f, 0.0f, 0.0f, 1.5f,
-		0.0f, 1.0f, 0.0f, -2.0f,
-		0.0f, 0.0f, 1.0f, 3.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-	quad->apply_transform(*quadtransform);
-
-
-	Quadratic *qsp = new Quadratic(1, -0.5, 0, 0, 1, 0, 0, 1, 0, -1);
-	qsp->set_material(new Phong(Colour(0, 0.01, 0), Colour(0.0, 0.3, 0.0), Colour(0.1, 0.1, 0.1), 10));
-	scene.add_object(qsp);
-
-	Transform * quadtransform2 = new Transform(
-		1.0f, 0.0f, 0.0f, 5.0f,
-		0.0f, 1.0f, 0.0f, -1.5f,
-		0.0f, 0.0f, 1.0f, 5.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-	qsp->apply_transform(*quadtransform2);
-
-	Quadratic *qsp2 = new Quadratic(1, 0, 0, 0, 1, 0, 0, 1, 0, -1);
-	qsp2->set_material(new Phong(Colour(0.01, 0, 0.01), Colour(0.1, 0, 0.3), Colour(0.1, 0.1, 0.1), 10));
-	scene.add_object(qsp2);
-
-	Transform * quadtransform3 = new Transform(
-		1.0f, 0.0f, 0.0f, 3.0f,
-		0.0f, 1.0f, 0.0f, -1.0f,
-		0.0f, 0.0f, 1.0f, 5.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-	qsp2->apply_transform(*quadtransform3);
-
-
+	Light *l0 = new PointLight(Vertex(1.0f, 2.0f, -8.0f), Colour(0.1, 0.1, 0.1));
+	scene.add_light(l0);
 
 	Sphere *sp2 = new Sphere(Vertex(0, 0, 0), 1);
 	sp2->set_material(new Phong(Colour(0, 0.01, 0), Colour(0, 0.3, 0), Colour(0.1, 0.1, 0.1), 10));
 	//scene.add_object(sp2);
 }
 
+void build_box(Scene& scene){
+	Material *white = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 10)));
+
+	Material *red = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.0, 0.0), Colour(0.5, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10)));
+
+	Material *green = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.0, 0.01, 0.0), Colour(0.0, 0.5, 0.0), Colour(0.1, 0.1, 0.1), 10)));
+
+	Material *mirror = new GlobalMaterial(&scene, Colour(1.0, 1.0, 1.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+	(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.05, 0.05, 0.05), Colour(0.1, 0.1, 0.1), 10)));
+
+
+	Plane *floor = new Plane(0, 1, 0, 0);
+	floor->set_material(white);
+	scene.add_object(floor);
+
+	Plane *back = new Plane(0, 0, -1, 5);
+	back->set_material(white);
+	scene.add_object(back);
+
+	Plane *left = new Plane(1, 0, 0, 5);
+	left->set_material(red);
+	scene.add_object(left);
+
+	Plane *right = new Plane(-1, 0, 0, 5);
+	right->set_material(green);
+	scene.add_object(right);
+
+	Plane *ceiling = new Plane(0, -1, 0, 10);
+	ceiling->set_material(white);
+	scene.add_object(ceiling);
+
+	Sphere *sphere = new Sphere(Vertex(1.0f,0.75f, 1.75f),0.75f);
+	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0, 0.01, 0.02), Colour(0.0, 0.12, 0.2), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(sphere);	
+
+	Sphere *reflectiveSphere = new Sphere(Vertex(-1.8, 2.0f, 2.5f),2.0f);
+	reflectiveSphere->set_material( new GlobalMaterial(&scene, Colour(0.95, 0.95, 0.95), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(reflectiveSphere);
+
+	Sphere *sphere2 = new Sphere(Vertex(2.3f,1.0f, 3.5f),1.0f);
+	sphere2->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.02, 0.01, 0.0), Colour(0.2, 0.12, 0.0), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(sphere2);
+
+	Sphere *refractiveSphere = new Sphere(Vertex(3.0f,1.0f,-0.5f),1.0f);
+	refractiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.95, 0.95, 0.95), 1.15f, 
+		(new Phong(Colour(0.01, 0.0, 0.01), Colour(0.05, 0.0, 0.05), Colour(0.05, 0.05, 0.05), 10))));
+	scene.add_object(refractiveSphere);
+
+	PolyMesh *cube = new PolyMesh((char *)"cube.obj", true, false, &scene);
+	cube->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.95, 0.95, 0.95), 1.1f, 
+		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.1, 0.1, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+	Transform *objectTransform = new Transform(
+		1.0f, 0.0f, 0.0f, 2.0f,
+		0.0f, 1.0f, 0.0f, 1.001f,
+		0.0f, 0.0f, 1.0f, 0.3f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	Transform * teapotTransform = new Transform(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	Transform * scaleTransform = new Transform(
+		2.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.1f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	cube->apply_transform(*scaleTransform);
+	//cube->apply_transform(*teapotTransform);
+	cube->apply_transform(*objectTransform);
+	//scene.add_object(cube);
+
+	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.1, 0.1, 0.1));
+	scene.add_light(light);
+}
+
 
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
-	int width = 2048;
-	int height = 2048;
+	srand (time(NULL));
+
+	int width = 512;
+	int height = 512;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
+
+	// Declare a camera
+	Vertex position(0.0f, 5.0f, -5.0f);
+	Vector lookat(0.0f, 0.0f, 1.0f);
+	Vector up(0.0f, 1.0f, 0.0f);
+
+	Camera* camera = new FullCamera(0.4f, position, lookat, up);
 	
 	// Create a scene
 	Scene scene;
 	
 	// Setup the scene
-	build_scene(scene);
-	
-	// Declare a camera
-	//Camera *camera = new SimpleCamera(0.5f);
-	// Vertex position(0.0f, 8.0f, 0.0f);
-	// Vector lookat(0.0f, -1.0f, 0.0f);
-	// Vector up(0.0f, 0.0f, 1.0f);
-	Vertex position(-3.5f, 3.0f, -11.0f);
-	Vector lookat(0.0f, -0.1f, 1.0f);
-	Vector up(0.0f, 1.0f, 0.0f);
-	Camera* camera = new FullCamera(0.7f, position, lookat, up);
+	//build_scene(scene);
+	build_box(scene);
+
+	// Photon Mapping
+	//scene.photonMapping(50000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

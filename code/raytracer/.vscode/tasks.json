@@ -25,7 +25,8 @@
                 "./linedrawer.cpp",
                 "./Materials/global_material.cpp",
                 "./Materials/compound_material.cpp",
-                "./Materials/mesh_material.cpp"
+                "./Materials/mesh_material.cpp",
+                "./PhotonMapping/photon_map.cpp"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

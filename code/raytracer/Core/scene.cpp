@@ -22,6 +22,7 @@ Scene::Scene()
 {
 	object_list = 0;
 	light_list = 0;
+	
 }
 
 bool Scene::shadowtrace(Ray ray, float limit)
@@ -34,10 +35,10 @@ bool Scene::shadowtrace(Ray ray, float limit)
 
 		if (hit != 0)
 		{
-		  if ((hit->t > 0.00000001f) &&( hit->t < limit))
+		  	if ((hit->t > 0.00000001f) &&( hit->t < limit))
 		    {
-			  delete hit;
-		      return true;
+			  	delete hit;
+		      	return true;
 		    }
 		  delete hit;
 		}
@@ -111,81 +112,87 @@ Hit* Scene::select_first(Hit* list)
 
 void Scene::raytrace(Ray ray, int recurse, Colour &colour, float &depth)
 {
-  Object *objects = object_list;
-  Light *lights = light_list;
-	
-  // a default colour if we hit nothing.
-  colour.r = 0.0f;
-  colour.g = 0.0f;
-  colour.b = 0.0f;
-  colour.a = 0.0f;
-  depth = 0.0f;
+	Object *objects = object_list;
+	Light *lights = light_list;
+		
+	// a default colour if we hit nothing.
+	colour.r = 0.0f;
+	colour.g = 0.0f;
+	colour.b = 0.0f;
+	colour.a = 0.0f;
+	depth = 0.0f;
 
-  // first step, find the closest primitive
-  Hit *best_hit = this->trace(ray);
+	// first step, find the closest primitive
+	Hit *best_hit = this->trace(ray);
 
-  // if we found a primitive then compute the colour we should see
-  if (best_hit != 0)
-  {
-	  depth = best_hit->t;
-	  colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
-
-	  // next, compute the light contribution for each light in the scene.
-	  Light* light = light_list;
-	  while (light != (Light*)0)
-	  {
-		  Vector viewer;
-		  Vector ldir;
-
-		  viewer = -best_hit->position;
-		  viewer.normalise();
-
-		  bool lit;
-		  lit = light->get_direction(best_hit->position, ldir);
-
-		  if (ldir.dot(best_hit->normal) > 0)
-		  {
-			  lit = false;//light is facing wrong way.
-		  }
-
-		  // Put the shadow check here, if lit==true and in shadow, set lit=false
-		  if (lit)
-		  {
-			  float shadowRayStartOffset =0.001f;
-		  	  float shadowLimit = 1000000000.0f;
-			  Ray shadow_ray;
-
-			  shadow_ray.direction = -ldir;
-			  // Adjust starting point of shadow ray to start just outside the object to stop self intersection
-			  shadow_ray.position = best_hit->position + (shadowRayStartOffset * shadow_ray.direction);
-
-			  if (this->shadowtrace(shadow_ray, shadowLimit))
-			  {
-				  lit = false; //there's a shadow so no lighting, if realistically close
-			  }
-		  }
-
-		  if (lit)
-		  {
-			  Colour intensity;
-			  
-			  light->get_intensity(best_hit->position, intensity);
-			  
-			  colour = colour + intensity * best_hit->what->material->compute_per_light(viewer, *best_hit, ldir); // this is the per light local contrib e.g. diffuse, specular
-
-		  }
-
-		  light = light->next;
-	  }
-
-	  delete best_hit;
-  } else
+	// if we found a primitive then compute the colour we should see
+	if (best_hit != 0)
 	{
-		colour.r = 0.0f;
-		colour.g = 0.0f;
-		colour.b = 0.0f;
-		colour.a = 1.0f;
-	}
+		depth = best_hit->t;
+		colour = colour + best_hit->what->material->compute_once(ray, *best_hit, recurse); // this will be the global components such as ambient or reflect/refract
+		
+		if (usingPhotonMap && best_hit->normal.len_sqr() > 0){
+			Colour indirectIllumination = calculateIndirectIllumination(best_hit);
+        	colour = colour + indirectIllumination;
+		}
+		
+		// next, compute the light contribution for each light in the scene.
+		Light* light = light_list;
+		while (light != (Light*)0)
+		{
+			Vector viewer;
+			Vector ldir;
+
+			viewer = -best_hit->position;
+			viewer.normalise();
+
+			bool lit;
+			lit = light->get_direction(best_hit->position, ldir);
+
+			if (ldir.dot(best_hit->normal) > 0)
+			{
+				lit = false;//light is facing wrong way.
+			}
+
+			// Put the shadow check here, if lit==true and in shadow, set lit=false
+			if (lit)
+			{
+				float shadowRayStartOffset = 0.0001f;
+				Ray shadow_ray;
+
+				shadow_ray.direction = -ldir;
+				// Adjust starting point of shadow ray to start just outside the object to stop self intersection
+				shadow_ray.position = best_hit->position + (shadowRayStartOffset * shadow_ray.direction);
+
+				float shadowLimit = light->getDistance(best_hit->position);
+
+				if (this->shadowtrace(shadow_ray, shadowLimit))
+				{
+					lit = false; //there's a shadow so no lighting, if realistically close
+				}
+			}
+
+			if (lit)
+			{
+				Colour intensity;
+				
+				light->get_intensity(best_hit->position, intensity);
+				
+				colour = colour + intensity * best_hit->what->material->compute_per_light(viewer, *best_hit, ldir); // this is the per light local contrib e.g. diffuse, specular
+
+			}
+
+			light = light->next;
+		}
+
+		delete best_hit;
+	} else
+		{
+			colour.r = 0.0f;
+			colour.g = 0.0f;
+			colour.b = 0.0f;
+			colour.a = 1.0f;
+		}
 }
 
 void Scene::add_object(Object *obj)
@@ -198,5 +205,105 @@ void Scene::add_light(Light *light)
 {
   light->next = this->light_list;
   this->light_list = light;
+}
+
+void Scene::photontrace(Photon photon, int recurse){
+    // Perform intersection test to find the nearest surface
+	Ray ray;
+	ray.position = Vertex(photon.position.x, photon.position.y, photon.position.z);
+	ray.direction = photon.direction;
+    Hit* hit = trace(ray);
+
+    if (hit && hit->normal.len_sqr() > 0) {
+        // Store photon information at the intersection point
+		photon.position = hit->position;
+        
+        // Update the photon direction based on material properties
+		Photon newPhoton = Photon(photon.position, photon.direction, photon.energy, photon.type);
+        bool storePhoton = hit->what->material->receivePhoton(&newPhoton, *hit);
+
+		if (storePhoton){
+			if (photon.type == caustic){
+				causticMap->addPhoton(photon);
+			}
+			else if (recurse == photonTraceDepth){
+				photon.type = direct;
+			}
+			else{
+				photon.type = indirect;
+			}
+
+			photonMap->addPhoton(photon);
+		}
+
+		if (!newPhoton.absorbed && recurse > 0){
+			photontrace(newPhoton, recurse - 1);
+		}
+    }
+
+	delete hit;
+}
+
+void Scene::photonMapping(int n){
+	usingPhotonMap = true;
+	photonMap = new PhotonMap();
+	causticMap = new PhotonMap();
+
+	//Trace Photons
+	Light* light = light_list;
+	while (light != (Light*)0)
+	{
+		vector<Photon> lightPhotons = light->getPhotons(n);
+		int f = lightPhotons.size();
+		for (int i = 0; i < lightPhotons.size(); i++){
+			photontrace(lightPhotons[i], photonTraceDepth);
+			if (i%(n / 20) == 0){
+				std::cout << "\nLight:" <<(100 * i/n) << "%";
+			}
+		}
+
+		light = light->next;
+	}
+
+	// Build Photon Maps
+	photonMap->buildMap();
+	causticMap->buildMap();
+}
+
+Colour Scene::calculateIndirectIllumination(Hit *hit){
+	Colour result;
+
+	float n = 10;
+	// vector<Photon> nearbyPhotons = photonMap->query(hit->position, n);
+
+	// Vector point = hit->position;
+	// float radius = 0.0f;
+	// for (Photon photon : nearbyPhotons){
+	// 	if ((photon.position - point).len_sqr() > pow(radius, 2)){
+	// 		radius = (photon.position - point).length();
+	// 	}
+	// }
+	
+	// Vector view = -point;
+	// Colour flux = Colour();
+	// for (Photon photon : nearbyPhotons){
+	// 	flux = flux + photon.energy * hit->what->material->compute_per_light(view, *hit, photon.direction);
+	// }
+
+	// result = flux * (1 / (M_PI * pow(radius,2)));
+
+	Photon p;
+    p.position = hit->position;
+    std::vector<Photon> nearbyPhotons = photonMap->kdtree.find(p, 1, 0.02);
+	if (nearbyPhotons.size() > 0){
+		result = Colour(0.3f, 0.3f, 0.3f);	
+	}
+
+	// vector<Photon> nearbyPhotons = causticMap->query(point, 10);
+	// if (nearbyPhotons.size() > 0){
+	// 	result = Colour(0.3f, 0.3f, 0.3f);
+	// }
+
+	return result;
 }
 

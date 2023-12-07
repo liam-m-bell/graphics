@@ -32,6 +32,7 @@
 
 using namespace std;
 
+// Calculates the face normal for a triangle
 Vector PolyMesh::getTriangleNormal(TriangleIndex t){
     Vector normal;
     Vector a = (vertex[t[1]] - vertex[t[0]]);
@@ -41,6 +42,7 @@ Vector PolyMesh::getTriangleNormal(TriangleIndex t){
     return normal;
 }
 
+// Calculates and stores the vertex normals for all verticies which don't already have a normal
 void PolyMesh::calculateVertexNormals(){
     for (int i = 0; i < vertex_count; i++){
         if (vertexNormals[i] == -1){
@@ -57,6 +59,7 @@ void PolyMesh::calculateVertexNormals(){
     }
 }
 
+// Adds a triangle to the mesh
 void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[], string material){
     Vector normal = getTriangleNormal({ P[t[0]], P[t[1]], P[t[2]] });
     if (isnan(normal.x)){
@@ -89,6 +92,7 @@ void PolyMesh::addTriangle(TriangleIndex t, int P[], int N[], string material){
     triangle_count++;
 }
 
+// Splits a polygon into triangles
 void PolyMesh::triangulatePolygon(int P[], int N[], int n, string material){
     if (n == 3){
         // Already a triangle
@@ -400,11 +404,8 @@ void PolyMesh::loadMaterial(string file, Environment* env){
 
         if (lineHeader == "newmtl"){
             if (materialCount > 0){
-                CompoundMaterial *compoundMat = new CompoundMaterial(2);
-                compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
-                compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
-                
-                materials[faceMaterial.name] = compoundMat;
+                Phong *phongMat = new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns);
+                materials[faceMaterial.name] = new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni, phongMat);
             }
             faceMaterial = OBJMaterial();
             string name;
@@ -450,16 +451,14 @@ void PolyMesh::loadMaterial(string file, Environment* env){
     }
 
     if (materialCount > 0){
-        CompoundMaterial *compoundMat = new CompoundMaterial(2);
-        compoundMat->include_material(new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns));
-        compoundMat->include_material(new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni));
-        
-        materials[faceMaterial.name] = compoundMat;
+        Phong *phongMat = new Phong(faceMaterial.Ka, faceMaterial.Kd, faceMaterial.Ks, faceMaterial.Ns);
+        materials[faceMaterial.name] = new GlobalMaterial(env, faceMaterial.Tr, faceMaterial.Tf, faceMaterial.Ni, phongMat);
     }
 
     matFile.close();
 }
 
+// Returns pointer to Material for a given name of a material
 Material* PolyMesh::getFaceMaterial(string matName){
     Material *mat = materials[matName];
     return mat;

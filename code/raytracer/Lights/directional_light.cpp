@@ -43,3 +43,7 @@ void DirectionalLight::get_intensity(Vertex &surface, Colour &level)
 {
 	level = intensity;
 }
+
+float DirectionalLight::getDistance(Vertex point){
+	return 1000000000.0f;
+}
