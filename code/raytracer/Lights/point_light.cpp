@@ -72,7 +72,7 @@ std::vector<Photon> PointLight::getPhotons(int n){
 		photon.direction = direction;
 
 		// Distribute the lights totale energy evenly for all the photons
-		photon.energy = intensity * (1/(float)n);
+		photon.energy =  intensity * (1500/(float)n);
 
 		photons.push_back(photon);
 	}

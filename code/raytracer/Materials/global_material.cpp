@@ -167,9 +167,10 @@ bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 	float randomValue = (float)(rand()) / (float)(RAND_MAX);
 	
 	if (randomValue < diffuseProbability) {
+		Vector incidentDir = photon->direction;
 		photon->direction = diffuseReflection(hit.normal);
+		photon->energy = photon->energy * phongMat->diffuse(photon->direction, hit, incidentDir);
 		return true;
-
 	} else if (randomValue < diffuseProbability + specularProbability) {
 		photon->direction = specularReflection(photon->direction, hit.normal);
 		photon->type = caustic;
@@ -200,7 +201,7 @@ Vector GlobalMaterial::diffuseReflection(Vector normal){
 	perp2.normalise();
 	
 
-	// Use cosine weighted reflection direction (https://pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations#ConcentricSampleDisk)
+	// Use cosine weighted reflection direction (https://pbr-book.org/3ed-2018/Monte_Carlo_Integration/2D_Sampling_with_Multidimensional_Transformations#Cosine-WeightedHemisphereSampling)
 	std::default_random_engine generator;
 	generator.seed(rand());
  	std::uniform_real_distribution<float> distribution(0.0f,1.0f);

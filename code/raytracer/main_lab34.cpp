@@ -201,17 +201,20 @@ void build_box(Scene& scene){
 
 	Sphere *sphere = new Sphere(Vertex(1.0f,0.75f, 1.75f),0.75f);
 	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0, 0.01, 0.02), Colour(0.0, 0.12, 0.2), Colour(0.1, 0.1, 0.1), 10))));
-	//scene.add_object(sphere);	
+		(new Phong(Colour(0, 0.03, 0.02), Colour(0.0, 0.3, 0.2), Colour(0.1, 0.1, 0.1), 10))));
+	scene.add_object(sphere);	
 
 	Sphere *reflectiveSphere = new Sphere(Vertex(-1.8, 2.0f, 2.5f),2.0f);
 	reflectiveSphere->set_material( new GlobalMaterial(&scene, Colour(0.95, 0.95, 0.95), Colour(0.0, 0.0, 0.0), 1.0f, 
 		(new Phong(Colour(0.0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
+
+	reflectiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.01, 0.01, 0.02), Colour(0.1, 0.12, 0.3), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(reflectiveSphere);
 
 	Sphere *sphere2 = new Sphere(Vertex(2.3f,1.0f, 3.5f),1.0f);
 	sphere2->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0, 0.01, 0.02), Colour(0.0, 0.12, 0.2), Colour(0.1, 0.1, 0.1), 10))));
+		(new Phong(Colour(0.01, 0.01, 0.02), Colour(0.3, 0.12, 0.2), Colour(0.1, 0.1, 0.1), 10))));
 	scene.add_object(sphere2);
 
 	Sphere *refractiveSphere = new Sphere(Vertex(3.0f,1.0f,-0.5f),1.0f);
@@ -243,7 +246,7 @@ void build_box(Scene& scene){
 	cube->apply_transform(*objectTransform);
 	//scene.add_object(cube);
 
-	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.1, 0.1, 0.1));
+	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.2, 0.2, 0.2));
 	scene.add_light(light);
 
 	
@@ -263,7 +266,7 @@ void build_box(Scene& scene){
 	craft->apply_transform(*craftTransform);
 	craft->apply_transform(*scaleT);
 
-	scene.add_object(craft);
+	//scene.add_object(craft);
 }
 
 
@@ -272,8 +275,8 @@ int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 2048;
-	int height = 2048;
+	int width = 256;
+	int height = 256;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 
@@ -292,7 +295,7 @@ int main(int argc, char *argv[])
 	build_box(scene);
 
 	// Photon Mapping
-	//scene.photonMapping(50000);
+	scene.photonMapping(100000);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);

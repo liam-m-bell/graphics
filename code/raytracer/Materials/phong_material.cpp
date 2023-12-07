@@ -64,4 +64,21 @@ Colour Phong::compute_per_light(Vector& viewer, Hit& hit, Vector& ldir)
 	return result;
 }
 
+Colour Phong::diffuse(Vector& viewer, Hit& hit, Vector& ldir){
+	Colour result;
+	Vector normal = hit.normal;
+	float ndotl = normal.dot(-ldir);
+
+	if (ndotl < 0.0f) // light is behind surface
+	{
+		return result;
+	}
+	
+	if (ndotl > 0){
+		Colour diffuse = kDiffuse * ndotl;
+		result.add(diffuse);
+	}
+
+	return result;
+}
 
