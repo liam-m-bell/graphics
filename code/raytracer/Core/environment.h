@@ -43,14 +43,4 @@ public:
 	{
 		return false;
 	}
-
-	virtual void photonMapping(int n){
-
-	}
-  	virtual void photontrace(Photon ray, int recurse){
-
-	}
-  	virtual Colour calculateIndirectIllumination(Hit *hit){
-		return Colour();
-	}
 };

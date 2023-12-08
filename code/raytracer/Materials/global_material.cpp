@@ -169,7 +169,7 @@ bool GlobalMaterial::reflectPhoton(Photon *photon, Hit &hit){
 	if (randomValue < diffuseProbability) {
 		Vector incidentDir = photon->direction;
 		photon->direction = diffuseReflection(hit.normal);
-		photon->energy = photon->energy * phongMat->diffuse(photon->direction, hit, incidentDir);
+		photon->energy = photon->energy * phongMat->kDiffuse;
 		return true;
 	} else if (randomValue < diffuseProbability + specularProbability) {
 		photon->direction = specularReflection(photon->direction, hit.normal);

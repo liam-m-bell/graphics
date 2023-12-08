@@ -16,6 +16,8 @@
 * produced it.
 */
 
+// Point light source which can be set to emit photons uniformly in a sphere or hemisphere
+
 #include <random>
 
 #include "point_light.h"
@@ -58,8 +60,10 @@ std::vector<Photon> PointLight::getPhotons(int n){
 
 	std::vector<Photon> photons;
 
+	// Generate n photons
 	for (int i = 0; i < n; i++){
 		Vector direction;
+		// Use rejection sampling to pick uniform direction
 		do {
 			direction.x = distribution(generator);
 			direction.y = distribution(generator);
@@ -72,7 +76,7 @@ std::vector<Photon> PointLight::getPhotons(int n){
 		photon.direction = direction;
 
 		// Distribute the lights totale energy evenly for all the photons
-		photon.energy =  intensity * (1500/(float)n);
+		photon.energy =  intensity * (500/(float)n);
 
 		photons.push_back(photon);
 	}

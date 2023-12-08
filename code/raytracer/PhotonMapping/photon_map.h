@@ -9,7 +9,7 @@
 
 class PhotonMap {
 public:
-
+    // Used KD Implementation from https://github.com/xavierholt/kd
     KD::Tree<KD::Core<3, Photon>> kdtree;
 
     std::vector<Photon> photons;  
@@ -22,5 +22,3 @@ public:
     void buildMap();
     std::vector<Photon> query(Vector point, int n);
 };
-
-

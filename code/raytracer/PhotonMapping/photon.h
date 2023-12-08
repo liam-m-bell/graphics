@@ -26,7 +26,7 @@ struct Photon
 	float operator [] (int i) const {
 		if (i == 0) { return position.x; }
 		if (i == 1) { return position.y; }
-		if (i == 2) { return position.z; }
+		else { return position.z; }
 	}
 
 	bool operator == (const Photon& p) const {

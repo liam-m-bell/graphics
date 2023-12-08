@@ -62,5 +62,6 @@ public:
   PhotonMap *causticMap;
   void photonMapping(int n);
   void photontrace(Photon ray, int recurse);
-  Colour calculateIndirectIllumination(Hit *hit);
+  Colour calculateIndirectIllumination(Vertex position);
+  Colour renderCaustics(Vector position);
 };

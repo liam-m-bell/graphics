@@ -16,6 +16,7 @@
 * produced it.
 */
 
+// Point light source which can be set to emit photons uniformly in a sphere or hemisphere
 
 #pragma once
 #include "../Core/light.h"

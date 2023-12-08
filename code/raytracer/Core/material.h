@@ -51,7 +51,8 @@ public:
 
 	// You will need additional material methods to support Photon-mapping.
 
+	// Decides what to do with a photon when it encounter this material.
 	virtual bool receivePhoton(Photon *photon, Hit &hit){
-
+		return false;
 	}
 };

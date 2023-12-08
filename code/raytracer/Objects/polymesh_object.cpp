@@ -338,6 +338,7 @@ Hit* PolyMesh::intersection(Ray ray)
             if (hit->normal.dot(ray.direction) > 0.0)
             {
                 hit->normal.negate();
+                hit->entering = false;
             }
 
             // Add material to Hit

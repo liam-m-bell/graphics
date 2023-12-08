@@ -54,10 +54,12 @@ public:
 
 	// You will need additional light methods to support Photon-mapping.
 
+	// Gets distance to the light source from a point
 	virtual float getDistance(Vertex point){
-		
+		return 0.0f;
 	}
 
+	// Generates n photons from the light
 	virtual std::vector<Photon> getPhotons(int n){
 		std::vector<Photon> photons;
 		return photons;
