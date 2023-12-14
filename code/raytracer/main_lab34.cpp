@@ -50,126 +50,43 @@
 
 using namespace std;
 
-void build_box(Scene& scene){
-	Material *white = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.5, 0.5, 0.5), Colour(0.1, 0.1, 0.1), 10)));
+void build_scene(Scene& scene){
+	// Scene using models from https://www.kenney.nl/assets/holiday-kit
+	// Deer model from https://free3d.com/3d-model/low-poly-deer-87801.html
 
-	Material *red = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.01, 0.0, 0.0), Colour(0.5, 0.0, 0.0), Colour(0.1, 0.1, 0.1), 10)));
-
-	Material *green = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.0, 0.01, 0.0), Colour(0.0, 0.5, 0.0), Colour(0.1, 0.1, 0.1), 10)));
-
-	Material *mirror = new GlobalMaterial(&scene, Colour(1.0, 1.0, 1.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-	(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.05, 0.05, 0.05), Colour(0.1, 0.1, 0.1), 10)));
-
-
-	Plane *floor = new Plane(0, 1, 0, 0);
-	floor->set_material(white);
-	scene.add_object(floor);
-
-	Plane *back = new Plane(0, 0, -1, 5);
-	back->set_material(white);
-	scene.add_object(back);
-
-	Plane *left = new Plane(1, 0, 0, 5);
-	left->set_material(red);
-	scene.add_object(left);
-
-	Plane *right = new Plane(-1, 0, 0, 5);
-	right->set_material(green);
-	scene.add_object(right);
-
-	Plane *ceiling = new Plane(0, -1, 0, 10);
-	ceiling->set_material(white);
-	scene.add_object(ceiling);
-
-	Sphere *sphere = new Sphere(Vertex(1.0f,0.75f, 1.75f),0.75f);
-	sphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0, 0.03, 0.02), Colour(0.0, 0.3, 0.2), Colour(0.1, 0.1, 0.1), 10))));
-	scene.add_object(sphere);	
-
-	Sphere *reflectiveSphere = new Sphere(Vertex(-1.8, 2.0f, 2.5f),2.0f);
-	reflectiveSphere->set_material( new GlobalMaterial(&scene, Colour(0.95, 0.95, 0.95), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.0, 0.0, 0.01), Colour(0.0, 0.0, 0.1), Colour(0.1, 0.1, 0.1), 10))));
-
-	reflectiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.01, 0.01, 0.02), Colour(0.1, 0.12, 0.3), Colour(0.1, 0.1, 0.1), 10))));
-	scene.add_object(reflectiveSphere);
-
-	Sphere *sphere2 = new Sphere(Vertex(2.3f,1.0f, 3.5f),1.0f);
-	sphere2->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
-		(new Phong(Colour(0.01, 0.01, 0.02), Colour(0.3, 0.12, 0.2), Colour(0.1, 0.1, 0.1), 10))));
-	scene.add_object(sphere2);
-
-	Sphere *refractiveSphere = new Sphere(Vertex(3.0f,1.0f,-0.5f),1.0f);
-	refractiveSphere->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.95, 0.95, 0.95), 1.15f, 
-		(new Phong(Colour(0.01, 0.0, 0.01), Colour(0.05, 0.0, 0.05), Colour(0.05, 0.05, 0.05), 10))));
-	//scene.add_object(refractiveSphere);
-
-
-	Light *light = new PointLight(Vertex(0.0f, 9.9f, 0.0f), Colour(0.2, 0.2, 0.2));
-	scene.add_light(light);
-
+	PolyMesh *snow = new PolyMesh((char *)"snowy.obj", false, true, &scene);
+	Transform *transform = new Transform(
+		10.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 10.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 10.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	snow->apply_transform(*transform);
+	scene.add_object(snow);
 	
-	PolyMesh *craft = new PolyMesh((char *)"craft.obj", false, true, &scene);
-	Transform *craftTransform = new Transform(
-		-0.7071068f, 0.0f, -0.7071068f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.7071068f, 0.0f, -0.7071068f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
+	Light *light = new PointLight(Vertex(-20.0f, 60.0f, 20.0f), Colour(0.2, 0.2, 0.2));
+	scene.add_light(light);
+	
+	Material *blue = new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 1.0f, 
+		(new Phong(Colour(0.0, 0.0, 0.1), Colour(0.0, 0.0, 0.0), Colour(0.0, 0.0, 0.0), 0)));
 
-	Transform *scaleT = new Transform(
-		1.6f, 0.0f, 0.0f, 1.8f,
-		0.0f, 1.6f, 0.0f, 0.2f,
-		0.0f, 0.0f, 1.6f, 0.4f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-	craft->apply_transform(*craftTransform);
-	craft->apply_transform(*scaleT);
-
-
-		PolyMesh *cube = new PolyMesh((char *)"cube.obj", true, false, &scene);
-	cube->set_material(new GlobalMaterial(&scene, Colour(0.0, 0.0, 0.0), Colour(0.95, 0.95, 0.95), 1.05f, 
-		(new Phong(Colour(0.01, 0.01, 0.01), Colour(0.1, 0.1, 0.1), Colour(0.1, 0.1, 0.1), 10))));
-	Transform *objectTransform = new Transform(
-		1.0f, 0.0f, 0.0f, 2.0f,
-		0.0f, 1.0f, 0.0f, 1.001f,
-		0.0f, 0.0f, 1.0f, 0.3f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-	Transform * teapotTransform = new Transform(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-	Transform * scaleTransform = new Transform(
-		2.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.4f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.1f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-	cube->apply_transform(*scaleTransform);
-	//cube->apply_transform(*teapotTransform);
-	cube->apply_transform(*objectTransform);
-	//scene.add_object(cube);
-
-	//scene.add_object(craft);
+	Plane *sky = new Plane(-1, 0, 0, 20);
+	sky->set_material(blue);
+	scene.add_object(sky);
 }
-
 
 // This is the entry point function to the program.
 int main(int argc, char *argv[])
 {
 	srand (time(NULL));
 
-	int width = 512;
-	int height = 512;
+	int width = 2048;
+	int height = 2048;
 	// Create a framebuffer
 	FrameBuffer* fb = new FrameBuffer(width, height);
 
 	// Declare a camera
-	Vertex position(0.0f, 5.0f, -5.0f);
-	Vector lookat(0.0f, 0.0f, 1.0f);
+	Vertex position(-5.3f, 5.0f, 4.1f);
+	Vector lookat(1.0f, 0.0f, -0.6f);
 	Vector up(0.0f, 1.0f, 0.0f);
 
 	Camera* camera = new FullCamera(0.4f, position, lookat, up);
@@ -178,12 +95,7 @@ int main(int argc, char *argv[])
 	Scene scene;
 	
 	// Setup the scene
-	//build_scene(scene);
-	build_box(scene);
-
-	// Photon Mapping
-	scene.photonTraceDepth = 10;
-	scene.photonMapping(30000);
+	build_scene(scene);
 	
 	// Camera generates rays for each pixel in the framebuffer and records colour + depth.
 	camera->render(scene,*fb);
